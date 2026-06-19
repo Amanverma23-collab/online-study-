@@ -234,3 +234,13 @@ model SeriesAnswer {
   isMarked    Boolean        @default(false)
   isVisited   Boolean        @default(false)
 }
+
+model PasswordResetOTP {
+  id          String   @id @default(cuid())
+  email       String
+  otpHash     String   // bcrypt-hashed OTP, never store plain OTP
+  expiresAt   DateTime // OTP valid for 10 minutes
+  isUsed      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+

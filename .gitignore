@@ -41,3 +41,5 @@ next-env.d.ts
 *.db-journal
 /scratch/
 *.pdf
+
+.vercel
