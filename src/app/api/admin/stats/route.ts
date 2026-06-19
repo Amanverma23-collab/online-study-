@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getSmsBalance } from "@/lib/sms";
 
 export async function GET() {
   try {
@@ -10,11 +11,15 @@ export async function GET() {
     const totalStudents = await db.student.count();
     const totalAttempts = await db.attempt.count();
 
+    const smsInfo = await getSmsBalance();
+
     return NextResponse.json({
       totalTests,
       liveTests,
       totalStudents,
-      totalAttempts
+      totalAttempts,
+      smsBalance: smsInfo?.balance ?? 0,
+      smsEnabled: smsInfo?.enabled ?? false
     });
   } catch (error: any) {
     console.error("Stats API Error:", error);
@@ -22,3 +27,4 @@ export async function GET() {
   }
 }
 export const dynamic = "force-dynamic";
+

@@ -10,6 +10,8 @@ interface Stats {
   liveTests: number;
   totalStudents: number;
   totalAttempts: number;
+  smsBalance?: number;
+  smsEnabled?: boolean;
 }
 
 interface Test {
@@ -31,7 +33,9 @@ export default function AdminDashboard() {
     totalTests: 0,
     liveTests: 0,
     totalStudents: 0,
-    totalAttempts: 0
+    totalAttempts: 0,
+    smsBalance: 0,
+    smsEnabled: false
   });
   const [recentTests, setRecentTests] = useState<Test[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,6 +101,27 @@ export default function AdminDashboard() {
             <Plus className="w-4 h-4" /> Create test setup
           </Link>
         </div>
+
+        {/* MSG91 Wallet Balance Warning Banner */}
+        {!loading && stats.smsEnabled && stats.smsBalance !== undefined && stats.smsBalance < 50 && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-[6px] text-amber-800 text-sm flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              <div>
+                <span className="font-bold">Low SMS Wallet Balance Warning: </span>
+                <span>Your MSG91 wallet balance is extremely low (<strong>₹{stats.smsBalance.toFixed(2)}</strong>). Please recharge your MSG91 account to ensure students can receive OTPs.</span>
+              </div>
+            </div>
+            <a
+              href="https://control.msg91.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-display font-bold uppercase tracking-wider text-[#C9A84C] hover:text-[#EEF0E8] bg-[#0D0F12] px-3.5 py-1.5 rounded transition shadow-sm ml-4 whitespace-nowrap"
+            >
+              Recharge Wallet
+            </a>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center h-64">

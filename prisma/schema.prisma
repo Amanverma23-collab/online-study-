@@ -244,3 +244,13 @@ model PasswordResetOTP {
   createdAt   DateTime @default(now())
 }
 
+model StudentPasswordResetOTP {
+  id          String   @id @default(cuid())
+  mobile      String
+  otpHash     String   // bcrypt-hashed OTP, never store plain OTP
+  expiresAt   DateTime // OTP valid for 10 minutes
+  isUsed      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+

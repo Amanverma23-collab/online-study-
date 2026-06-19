@@ -271,6 +271,16 @@ export default function StudentLoginPage() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {activeTab === "login" && (
+                <div className="flex justify-end mt-2">
+                  <Link
+                    href="/forgot-password"
+                    className="text-[11px] font-display font-semibold uppercase tracking-wider text-[#C9A84C] hover:text-[#0D0F12] transition"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
+              )}
             </div>
 
             {activeTab === "register" && (
