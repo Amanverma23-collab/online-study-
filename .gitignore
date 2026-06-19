@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# custom ignores
+.env
+*.db
+*.db-journal
+/scratch/
+*.pdf

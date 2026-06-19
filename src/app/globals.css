@@ -2,26 +2,184 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  /* Hide scrollbars globally everywhere */
+  html {
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+  }
+  html::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  * {
+    scrollbar-width: none;  /* Firefox - all elements */
+    -ms-overflow-style: none;  /* IE and Edge - all elements */
+  }
+  *::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera - all elements */
+  }
+
+  body {
+    background-color: #F5F3EC;
+    color: #0D0F12;
+    font-family: var(--font-body), sans-serif;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Heading display classes */
+.page-title {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.section-title {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+}
+
+.question-text {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.label-badge {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Specific buttons utility classes */
+.btn-primary {
+  background-color: #C9A84C;
+  color: #0D0F12;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  padding: 12px 28px;
+  border: none;
+  transition: background-color 0.15s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #F0D080;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1.5px solid #8B9E6A;
+  color: #8B9E6A;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 10px 24px;
+  transition: all 0.15s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: #C9A84C;
+  color: #C9A84C;
+}
+
+.input-dark {
+  background-color: #1C2415;
+  border: 1px solid #2E3B1E;
+  border-radius: 4px;
+  color: #EEF0E8;
+  font-family: var(--font-body), sans-serif;
+  font-size: 15px;
+  padding: 12px 16px;
+  transition: border-color 0.15s;
+}
+
+.input-dark:focus {
+  border-color: #C9A84C;
+  outline: none;
+}
+
+/* Compare bar charts */
+@keyframes fillWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: var(--progress-width);
+  }
+}
+
+.animate-fill-width {
+  animation: fillWidth 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes pulse-timer {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-pulse-timer {
+  animation: pulse-timer 1s infinite;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Push admin main content down on mobile screens to prevent overlap with the fixed top navbar */
+@media (max-width: 768px) {
+  div.flex.h-screen.overflow-hidden > main {
+    padding-top: 4.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* Fix sticky header gap on desktop by removing top padding from the scroll container */
+@media (min-width: 769px) {
+  div.flex.h-screen.overflow-hidden > main {
+    padding-top: 0 !important;
+  }
+
+  div.flex.h-screen.overflow-hidden > main .sticky.top-0 {
+    margin-top: 0 !important;
+    padding-top: 2rem !important;
   }
 }

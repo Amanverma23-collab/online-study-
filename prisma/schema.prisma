@@ -1,0 +1,235 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  password    String
+  name        String
+  tests       Test[]
+  testSeries  TestSeries[]
+}
+
+model Student {
+  id              String           @id @default(cuid())
+  name            String
+  fatherName      String
+  mobile          String           @unique
+  password        String           @default("")
+  status          String           @default("VERIFIED") // "VERIFIED" | "BANNED"
+  batch           String           @default("NDA")      // "NDA" | "CDS" | "OTA"
+  createdAt       DateTime         @default(now())
+  attempts        Attempt[]
+  seriesPurchases SeriesPurchase[]
+  seriesAttempts  SeriesAttempt[]
+}
+
+model Test {
+  id            String        @id @default(cuid())
+  title         String
+  duration      Int           // TOTAL duration in minutes
+  negativeMarks Float         // default
+  marksPerQ     Float         // default
+  isLive        Boolean       @default(false)
+  cutoffMarks   Float?
+  createdAt     DateTime      @default(now())
+  adminId       String
+  admin         Admin         @relation(fields: [adminId], references: [id])
+  sections      TestSection[]
+  attempts      Attempt[]
+}
+
+model TestSection {
+  id             String          @id @default(cuid())
+  testId         String
+  test           Test            @relation(fields: [testId], references: [id], onDelete: Cascade)
+  subject        String          // e.g. "Mathematics", "GK", "English"
+  order          Int             // sequence within the test (1, 2, 3...)
+  duration       Int             // minutes allotted to THIS section specifically
+  marksPerQ      Float
+  negativeMarks  Float
+  questions      Question[]
+  sectionResults SectionResult[]
+}
+
+model Question {
+  id            String      @id @default(cuid())
+  sectionId     String
+  section       TestSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  questionText  String      
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctOption String
+  explanation   String?
+  order         Int
+  answers       Answer[]
+}
+
+model Attempt {
+  id                      String           @id @default(cuid())
+  studentId               String
+  student                 Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  testId                  String
+  test                    Test             @relation(fields: [testId], references: [id], onDelete: Cascade)
+  startedAt               DateTime         @default(now())
+  submittedAt             DateTime?        // set only when the FINAL section is submitted
+  currentSectionId        String?
+  currentSectionStartedAt DateTime?
+  totalScore              Float?
+  rank                    Int?
+  totalTakers             Int?
+  percentile              Float?
+  sectionResults          SectionResult[]
+  answers                 Answer[]
+  
+  @@unique([studentId, testId])
+}
+
+model SectionResult {
+  id          String      @id @default(cuid())
+  attemptId   String
+  attempt     Attempt     @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  sectionId   String
+  section     TestSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  score       Float
+  correct     Int
+  wrong       Int
+  unattempted Int
+  startedAt   DateTime
+  submittedAt DateTime
+}
+
+model Answer {
+  id          String   @id @default(cuid())
+  attemptId   String
+  attempt     Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selected    String?
+  isMarked    Boolean  @default(false)
+  isVisited   Boolean  @default(false)
+}
+
+model TestSeries {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  batch       String   // e.g. "NDA,CDS"
+  price       Float    // in INR
+  subjects    String   // e.g. "Mathematics,GK,English"
+  isLive      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  adminId     String
+  admin       Admin    @relation(fields: [adminId], references: [id])
+  tests       SeriesTest[]
+  purchases   SeriesPurchase[]
+}
+
+model SeriesTest {
+  id             String              @id @default(cuid())
+  seriesId       String
+  series         TestSeries          @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  title          String
+  duration       Int                 // TOTAL duration in minutes
+  negativeMarks  Float
+  marksPerQ      Float
+  order          Int                 // sequence/unlock order within the series
+  createdAt      DateTime            @default(now())
+  sections       SeriesTestSection[]
+  attempts       SeriesAttempt[]
+}
+
+model SeriesTestSection {
+  id             String                @id @default(cuid())
+  seriesTestId   String
+  seriesTest     SeriesTest            @relation(fields: [seriesTestId], references: [id], onDelete: Cascade)
+  subject        String
+  order          Int
+  duration       Int
+  marksPerQ      Float
+  negativeMarks  Float
+  questions      SeriesQuestion[]
+  sectionResults SeriesSectionResult[]
+}
+
+model SeriesQuestion {
+  id            String            @id @default(cuid())
+  sectionId     String
+  section       SeriesTestSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  questionText  String            
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctOption String
+  explanation   String?           
+  order         Int
+  answers       SeriesAnswer[]
+}
+
+model SeriesPurchase {
+  id              String     @id @default(cuid())
+  studentId       String
+  student         Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  seriesId        String
+  series          TestSeries @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  amount          Float
+  razorpayOrderId String
+  razorpayPaymentId String?
+  status          String     // "pending" | "success" | "failed"
+  purchasedAt     DateTime   @default(now())
+  @@unique([studentId, seriesId])
+}
+
+model SeriesAttempt {
+  id                      String                @id @default(cuid())
+  studentId               String
+  student                 Student               @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  seriesTestId            String
+  seriesTest              SeriesTest            @relation(fields: [seriesTestId], references: [id], onDelete: Cascade)
+  startedAt               DateTime              @default(now())
+  submittedAt             DateTime?
+  currentSectionId        String?
+  currentSectionStartedAt DateTime?
+  score                   Float?
+  rank                    Int?
+  totalTakers             Int?
+  percentile              Float?
+  sectionResults          SeriesSectionResult[]
+  answers                 SeriesAnswer[]
+  
+  @@unique([studentId, seriesTestId])
+}
+
+model SeriesSectionResult {
+  id          String            @id @default(cuid())
+  attemptId   String
+  attempt     SeriesAttempt     @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  sectionId   String
+  section     SeriesTestSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  score       Float
+  correct     Int
+  wrong       Int
+  unattempted Int
+  startedAt   DateTime
+  submittedAt DateTime
+}
+
+model SeriesAnswer {
+  id          String         @id @default(cuid())
+  attemptId   String
+  attempt     SeriesAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    SeriesQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selected    String?        
+  isMarked    Boolean        @default(false)
+  isVisited   Boolean        @default(false)
+}
