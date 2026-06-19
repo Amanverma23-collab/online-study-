@@ -335,14 +335,16 @@ export default function StudentLoginPage() {
             </p>
           )}
 
-          <div className="mt-6 pt-4 border-t border-[#DDD8CC] text-center">
-            <Link
-              href="/admin/login"
-              className="text-xs font-display font-bold uppercase tracking-wider text-[#C9A84C] hover:text-[#F0D080] transition inline-flex items-center gap-1"
-            >
-              Teacher Access Portal &rarr;
-            </Link>
-          </div>
+          {activeTab === "login" && (
+            <div className="mt-6 pt-4 border-t border-[#DDD8CC] text-center">
+              <Link
+                href="/admin/login"
+                className="text-xs font-display font-bold uppercase tracking-wider text-[#C9A84C] hover:text-[#F0D080] transition inline-flex items-center gap-1"
+              >
+                Teacher Access Portal &rarr;
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
