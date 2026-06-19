@@ -131,11 +131,11 @@ export default function StudentLoginPage() {
       <div
         className={`flex-1 p-8 md:p-16 items-center justify-center lg:h-full lg:overflow-y-auto ${
           showMobileAuth
-            ? "max-lg:fixed max-lg:inset-0 max-lg:z-50 max-lg:bg-[#F5F3EC] flex"
+            ? "max-lg:fixed max-lg:inset-0 max-lg:z-50 max-lg:bg-[#F5F3EC] flex max-lg:flex-col max-lg:justify-start max-lg:py-12 max-lg:overflow-y-auto"
             : "hidden lg:flex lg:bg-[#F5F3EC]"
         }`}
       >
-        <div className="w-full max-w-md bg-white border border-[#DDD8CC] rounded-[6px] p-8 my-auto relative">
+        <div className="w-full max-w-md bg-white border border-[#DDD8CC] rounded-[6px] p-8 lg:my-auto relative max-lg:my-4">
           {/* Close button for Mobile Modal overlay */}
           <button
             onClick={() => setShowMobileAuth(false)}
@@ -183,7 +183,7 @@ export default function StudentLoginPage() {
           </div>
 
           <div className="text-center mb-6">
-            <h3 className="font-display font-bold text-[24px] uppercase tracking-wider text-[#0D0F12]">
+            <h3 className="font-display font-bold text-lg sm:text-[24px] uppercase tracking-wider text-[#0D0F12] whitespace-nowrap">
               {activeTab === "login" ? "STUDENT LOGIN" : "STUDENT REGISTRATION"}
             </h3>
             <p className="text-xs text-[#8B9E6A] font-semibold mt-1">
