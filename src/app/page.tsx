@@ -16,7 +16,7 @@ export default function StudentLoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [batch, setBatch] = useState("NDA");
+  const [batch, setBatch] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -167,6 +167,7 @@ export default function StudentLoginPage() {
               onClick={() => {
                 setActiveTab("register");
                 setError("");
+                setBatch("");
                 setPassword("");
                 setConfirmPassword("");
                 setShowPassword(false);
@@ -201,7 +202,8 @@ export default function StudentLoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {activeTab === "register" && (
+            <div className="max-lg:max-h-[250px] max-lg:overflow-y-auto max-lg:pr-1 space-y-4">
+              {activeTab === "register" && (
               <>
                 <div>
                   <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">
@@ -307,12 +309,14 @@ export default function StudentLoginPage() {
                   className="w-full input-dark bg-[#1C2415] text-[#EEF0E8] focus:outline-none"
                   required
                 >
-                  <option value="NDA">NDA (National Defence Academy)</option>
-                  <option value="CDS">CDS (Combined Defence Services)</option>
-                  <option value="OTA">OTA (Officers Training Academy)</option>
+                  <option value="" disabled hidden>Select Batch</option>
+                  <option value="NDA">NDA</option>
+                  <option value="CDS">CDS</option>
+                  <option value="OTA">OTA</option>
                 </select>
               </div>
             )}
+            </div>
 
             <button
               type="submit"
