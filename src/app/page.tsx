@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Star, ShieldAlert, Award, Eye, EyeOff } from "lucide-react";
+import { Star, ShieldAlert, Award, Eye, EyeOff, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function StudentLoginPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [showMobileAuth, setShowMobileAuth] = useState(false);
   const [name, setName] = useState("");
   const [fatherName, setFatherName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -73,9 +74,9 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen flex flex-col lg:flex-row bg-[#0D0F12] lg:overflow-hidden">
+    <div className="h-screen w-screen flex flex-col lg:flex-row bg-[#0D0F12] overflow-hidden">
       {/* LEFT HALF (Dark #0D0F12) */}
-      <div className="flex-1 bg-[#0D0F12] p-8 md:p-16 flex flex-col justify-between relative overflow-hidden min-h-[50vh] lg:h-full">
+      <div className="flex-1 bg-[#0D0F12] p-8 md:p-16 flex flex-col justify-between relative overflow-hidden h-full">
         {/* Subtle pattern / faint topographic simulator lines in #1C2415 */}
         <div className="absolute inset-0 pointer-events-none select-none">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -107,9 +108,17 @@ export default function StudentLoginPage() {
           <p className="text-[14px] font-display font-semibold uppercase tracking-[0.3em] text-[#8B9E6A] mt-2.5">
             PREPARE &middot; COMPETE &middot; SERVE
           </p>
-          <p className="font-body text-sm text-[#EEF0E8]/70 mt-6 leading-relaxed">
+          <p className="font-body text-sm text-[#EEF0E8]/70 mt-6 leading-relaxed mb-6">
             Every candidate dreams of a commission. This briefing portal compiles exam templates, live session evaluations, and accuracy analysis designed for those chasing the toughest dream.
           </p>
+
+          {/* Get Started Button for Mobile viewports */}
+          <button
+            onClick={() => setShowMobileAuth(true)}
+            className="lg:hidden w-full btn-primary flex items-center justify-center gap-2 mt-4 shadow-lg hover:scale-[1.01] active:scale-[0.99] transition duration-200"
+          >
+            GET STARTED &rarr;
+          </button>
         </div>
 
         {/* Bottom Location */}
@@ -119,8 +128,22 @@ export default function StudentLoginPage() {
       </div>
 
       {/* RIGHT HALF (Cream #F5F3EC) */}
-      <div className="flex-1 bg-[#F5F3EC] p-8 md:p-16 flex items-center justify-center min-h-[50vh] lg:h-full lg:overflow-y-auto">
-        <div className="w-full max-w-md bg-white border border-[#DDD8CC] rounded-[6px] p-8 my-auto">
+      <div
+        className={`flex-1 p-8 md:p-16 items-center justify-center lg:h-full lg:overflow-y-auto ${
+          showMobileAuth
+            ? "max-lg:fixed max-lg:inset-0 max-lg:z-50 max-lg:bg-[#F5F3EC] flex"
+            : "hidden lg:flex lg:bg-[#F5F3EC]"
+        }`}
+      >
+        <div className="w-full max-w-md bg-white border border-[#DDD8CC] rounded-[6px] p-8 my-auto relative">
+          {/* Close button for Mobile Modal overlay */}
+          <button
+            onClick={() => setShowMobileAuth(false)}
+            className="lg:hidden absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-800 transition z-10"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
           {/* Tabs header */}
           <div className="flex border-b border-[#DDD8CC] mb-6 font-display font-bold uppercase tracking-wider text-xs">
             <button
