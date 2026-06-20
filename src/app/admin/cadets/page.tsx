@@ -42,6 +42,32 @@ export default function CadetsPage() {
     }
   };
 
+  const [deletingCadet, setDeletingCadet] = useState<Cadet | null>(null);
+
+  const confirmDelete = (cadet: Cadet) => {
+    setDeletingCadet(cadet);
+  };
+
+  const handleDelete = async () => {
+    if (!deletingCadet) return;
+    try {
+      const res = await fetch(`/api/admin/cadets/${deletingCadet.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCadets((prev) => prev.filter((c) => c.id !== deletingCadet.id));
+      } else {
+        alert(data.error || "Failed to delete cadet.");
+      }
+    } catch (err) {
+      console.error("Failed to delete cadet:", err);
+      alert("Failed to delete cadet due to a network error.");
+    } finally {
+      setDeletingCadet(null);
+    }
+  };
+
   const handleToggleStatus = async (cadetId: string) => {
     try {
       const res = await fetch(`/api/admin/cadets/${cadetId}/toggle`, { method: "PATCH" });
@@ -188,16 +214,24 @@ export default function CadetsPage() {
                         {cadet.submittedAttemptsCount}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => handleToggleStatus(cadet.id)}
-                          className={`px-3 py-1.5 rounded text-xs font-display font-bold uppercase tracking-wider transition duration-150 border ${
-                            cadet.status === "BANNED"
-                              ? "bg-[#4A7C59]/10 hover:bg-[#4A7C59]/25 text-[#4A7C59] border-[#4A7C59]/25"
-                              : "bg-[#D94F3D]/10 hover:bg-[#D94F3D]/25 text-[#D94F3D] border-[#D94F3D]/25"
-                          }`}
-                        >
-                          {cadet.status === "BANNED" ? "Verify Cadet" : "Ban Cadet"}
-                        </button>
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleToggleStatus(cadet.id)}
+                            className={`px-3 py-1.5 rounded text-xs font-display font-bold uppercase tracking-wider transition duration-150 border ${
+                              cadet.status === "BANNED"
+                                ? "bg-[#4A7C59]/10 hover:bg-[#4A7C59]/25 text-[#4A7C59] border-[#4A7C59]/25"
+                                : "bg-[#D94F3D]/10 hover:bg-[#D94F3D]/25 text-[#D94F3D] border-[#D94F3D]/25"
+                            }`}
+                          >
+                            {cadet.status === "BANNED" ? "Verify Cadet" : "Ban Cadet"}
+                          </button>
+                          <button
+                            onClick={() => confirmDelete(cadet)}
+                            className="px-3 py-1.5 rounded text-xs font-display font-bold uppercase tracking-wider transition duration-150 border bg-[#D94F3D] hover:bg-[#C23B2A] text-white border-[#D94F3D] hover:border-[#C23B2A]"
+                          >
+                            Delete Cadet
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -207,6 +241,42 @@ export default function CadetsPage() {
           )}
         </div>
       </main>
+
+      {deletingCadet && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-[6px] border border-[#DDD8CC] shadow-lg max-w-md w-full p-6 text-left">
+            <h3 className="font-display font-bold text-lg text-[#D94F3D] uppercase tracking-wider mb-2 flex items-center gap-2">
+              ⚠️ Delete Cadet?
+            </h3>
+            <p className="text-sm font-body text-[#0D0F12] leading-relaxed mb-4">
+              You are about to permanently delete <strong className="font-bold">{deletingCadet.name}</strong>'s account (Mobile: <strong className="font-mono">{deletingCadet.mobile}</strong>).
+            </p>
+            <div className="bg-gray-50 border border-gray-200 p-4 rounded text-xs text-gray-650 space-y-2 mb-6 font-semibold">
+              <p>This will:</p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>Permanently remove their account and all associated data</li>
+                <li>Free up their mobile number for future registration</li>
+                <li>They will need to register again from scratch to use the platform</li>
+              </ul>
+              <p className="text-[#D94F3D] font-bold">This action CANNOT be undone.</p>
+            </div>
+            <div className="flex justify-end gap-3 font-display text-xs font-bold uppercase tracking-wider">
+              <button
+                onClick={() => setDeletingCadet(null)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-[#0D0F12] border border-gray-300 rounded transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-[#D94F3D] hover:bg-[#C23B2A] text-white border border-[#D94F3D] rounded transition"
+              >
+                Yes, Delete Permanently
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
