@@ -107,7 +107,7 @@ export async function GET(
         timeSpent: timeSpentSec,
         accuracy: correct + incorrect > 0 ? Math.round((correct / (correct + incorrect)) * 100) : 0,
         rank: att.rank || 0,
-        percentile: att.percentile || 0,
+        percentile: totalMarks > 0 ? ((att.totalScore || 0) / totalMarks) * 100 : 0,
         totalTakers: att.totalTakers || allAttempts.length
       };
     };
@@ -227,6 +227,7 @@ export async function GET(
     });
 
     return NextResponse.json({
+      testId: currentAttempt.testId,
       testTitle: test.title,
       duration: test.duration,
       totalMarks,

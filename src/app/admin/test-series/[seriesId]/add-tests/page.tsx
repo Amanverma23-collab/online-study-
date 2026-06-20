@@ -30,9 +30,9 @@ interface TestSeries {
   id: string;
   title: string;
   description: string;
-  batch: string; // comma separated string e.g. "NDA,CDS"
+  batch: string | string[];
   price: number;
-  subjects: string; // comma separated string e.g. "Mathematics,GK"
+  subjects: string | string[];
   isLive: boolean;
   tests: SeriesTest[];
 }
@@ -383,7 +383,11 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
     );
   }
 
-  const seriesSubjectsList = series.subjects.split(",").map((s) => s.trim()).filter(Boolean);
+  const seriesSubjectsList = Array.isArray(series.subjects)
+    ? series.subjects
+    : typeof series.subjects === "string"
+    ? series.subjects.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F5F3EC] text-[#0D0F12]">

@@ -15,6 +15,11 @@ export async function GET(
         seriesTest: {
           include: {
             sections: {
+              include: {
+                _count: {
+                  select: { questions: true }
+                }
+              },
               orderBy: { order: "asc" }
             }
           }
@@ -155,6 +160,7 @@ export async function GET(
 
           const totalTakers = allSubmittedAttempts.length;
           const maxTime = test.duration * 60;
+          const totalMarks = test.sections.reduce((sum, sec) => sum + (sec.marksPerQ * sec._count.questions), 0);
 
           const attemptsWithTime = allSubmittedAttempts.map((att) => {
             const attSubmittedAt = new Date(att.submittedAt!);
@@ -176,7 +182,7 @@ export async function GET(
                   (other.score === att.score && other.timeSpent < att.timeSpent)
               ).length + 1;
 
-              const percentile = totalTakers <= 1 ? 100 : ((totalTakers - rank) / totalTakers) * 100;
+              const percentile = totalMarks > 0 ? (att.score / totalMarks) * 100 : 0;
 
               await db.seriesAttempt.update({
                 where: { id: att.id },

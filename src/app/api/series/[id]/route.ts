@@ -12,7 +12,15 @@ export async function GET(
       where: { id: seriesId },
       include: {
         tests: {
-          select: { id: true, title: true, order: true }
+          include: {
+            sections: {
+              include: {
+                questions: {
+                  select: { id: true }
+                }
+              }
+            }
+          }
         }
       }
     });

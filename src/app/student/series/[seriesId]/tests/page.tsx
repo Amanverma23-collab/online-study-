@@ -116,7 +116,7 @@ export default function SeriesTestsPage({ params }: { params: { seriesId: string
       {/* Top Navbar */}
       <header className="sticky top-0 z-50 bg-[#0D0F12] py-4 px-6 md:px-12 text-[#EEF0E8] shadow flex justify-between items-center border-b border-[#2E3B1E] flex-shrink-0">
         <div className="flex items-center gap-3">
-          <Link href={`/student/series/${seriesId}`} className="p-1 border border-[#2E3B1E] bg-[#1C2415] rounded hover:bg-[#2E3B1E] transition">
+          <Link href="/student/dashboard?tab=series" className="p-1 border border-[#2E3B1E] bg-[#1C2415] rounded hover:bg-[#2E3B1E] transition">
             <ArrowLeft className="w-4 h-4 text-[#C9A84C]" />
           </Link>
           <div>

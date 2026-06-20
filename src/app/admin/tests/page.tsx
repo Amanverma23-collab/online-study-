@@ -74,7 +74,7 @@ export default function MyTestsPage() {
       <AdminSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-[#F5F3EC] -mx-8 px-8 pt-4 -mt-8 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
+        <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-8 px-8 pt-0 md:pt-4 mt-0 md:-mt-8 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
           <div>
             <h1 className="page-title text-[#0D0F12]">Exam Templates</h1>
             <p className="text-sm text-[#8B9E6A] font-body mt-1">Manage created test schedules, toggle live states, and inspect scoreboards</p>

@@ -9,12 +9,14 @@ generator client {
 }
 
 model Admin {
-  id          String       @id @default(cuid())
-  email       String       @unique
-  password    String
-  name        String
-  tests       Test[]
-  testSeries  TestSeries[]
+  id              String           @id @default(cuid())
+  email           String           @unique
+  password        String
+  name            String
+  tests           Test[]
+  testSeries      TestSeries[]
+  liveClasses     LiveClass[]
+  recordedClasses RecordedClass[]
 }
 
 model Student {
@@ -254,3 +256,27 @@ model StudentPasswordResetOTP {
 }
 
 
+model LiveClass {
+  id          String   @id @default(cuid())
+  subject     String
+  title       String
+  details     String   @db.Text
+  zoomLink    String
+  classDate   DateTime
+  createdAt   DateTime @default(now())
+  adminId     String
+  admin       Admin    @relation(fields: [adminId], references: [id])
+}
+
+model RecordedClass {
+  id           String   @id @default(cuid())
+  subject      String
+  className    String
+  details      String   @db.Text
+  youtubeLink  String
+  notesUrl     String?
+  notesName    String?
+  createdAt    DateTime @default(now())
+  adminId      String
+  admin        Admin    @relation(fields: [adminId], references: [id])
+}

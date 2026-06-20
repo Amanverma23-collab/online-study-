@@ -95,9 +95,9 @@ export async function GET(
 
       const rank = att.rank || 1;
       const totalTakers = Math.max(allAttempts.length, 1);
-      const percentile = totalTakers > 1 
-        ? ((totalTakers - rank) / (totalTakers - 1)) * 100 
-        : 100;
+      const percentile = totalMarks > 0 
+        ? ((att.score || 0) / totalMarks) * 100 
+        : 0;
 
       return {
         id: att.id,
@@ -243,6 +243,7 @@ export async function GET(
     });
 
     return NextResponse.json({
+      testId: currentAttempt.seriesTestId,
       testTitle: test.title,
       duration: test.duration,
       totalMarks,

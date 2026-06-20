@@ -163,22 +163,31 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Push admin main content down on mobile screens to prevent overlap with the fixed top navbar */
+main {
+  overflow-x: hidden;
+}
+
+/* Push main content down on mobile screens to prevent overlap with the fixed top navbar */
 @media (max-width: 768px) {
-  div.flex.h-screen.overflow-hidden > main {
-    padding-top: 4.5rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+  div.flex.h-screen.overflow-hidden main {
+    margin-top: 3.5rem !important;
+    padding-top: 0 !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  div.flex.h-screen.overflow-hidden main .sticky.top-14 {
+    top: 0 !important;
   }
 }
 
 /* Fix sticky header gap on desktop by removing top padding from the scroll container */
 @media (min-width: 769px) {
-  div.flex.h-screen.overflow-hidden > main {
+  div.flex.h-screen.overflow-hidden main {
     padding-top: 0 !important;
   }
 
-  div.flex.h-screen.overflow-hidden > main .sticky.top-0 {
+  div.flex.h-screen.overflow-hidden main .sticky.top-0 {
     margin-top: 0 !important;
     padding-top: 2rem !important;
   }

@@ -81,7 +81,7 @@ export default function UpdateLiveSeriesHubPage({ params }: { params: { seriesId
       <AdminSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         {/* Top Header */}
-        <div className="sticky top-0 z-20 bg-[#F5F3EC] -mx-8 px-8 pt-4 -mt-8 flex items-center gap-3 mb-8 border-b border-[#DDD8CC] pb-6">
+        <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-8 px-8 pt-0 md:pt-4 mt-0 md:-mt-8 flex items-center gap-3 mb-8 border-b border-[#DDD8CC] pb-6">
           <button
             onClick={() => router.push("/admin/test-series")}
             className="p-1.5 border border-[#DDD8CC] rounded-sm bg-white hover:bg-gray-50 transition"

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
-import { FileText, Radio, Users, CheckCircle, ArrowRight, Play, Square, Trophy, Plus } from "lucide-react";
+import { FileText, Radio, Users, CheckCircle, ArrowRight, Play, Square, Trophy, Plus, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 interface Stats {
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       <AdminSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-[#F5F3EC] -mx-8 px-8 pt-4 -mt-8 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
+        <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-8 px-8 pt-0 md:pt-4 mt-0 md:-mt-8 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
           <div>
             <h1 className="page-title text-[#0D0F12]">Briefing Overview</h1>
             <p className="text-sm text-[#8B9E6A] font-body mt-1">Manage military test templates, live schedules, and results sheet exports</p>

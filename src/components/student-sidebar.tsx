@@ -2,50 +2,58 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
-import { Star, LayoutDashboard, PlusCircle, FileText, LogOut, Users, Package, Menu, X, Video } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Star, FileText, LogOut, Package, Menu, X, Video } from "lucide-react";
 
-export function AdminSidebar() {
+export function StudentSidebar() {
   const pathname = usePathname();
-  const [hasNewCadets, setHasNewCadets] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get("tab") || "tests";
+
+  const [studentName, setStudentName] = useState("");
+  const [studentBatch, setStudentBatch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const checkNewCadets = async () => {
-      try {
-        const lastChecked = localStorage.getItem("cadetsLastChecked") || "";
-        const res = await fetch(`/api/admin/cadets/new?since=${lastChecked}`);
-        const data = await res.json();
-        setHasNewCadets(data.count > 0);
-      } catch {
-        setHasNewCadets(false);
-      }
-    };
-
-    checkNewCadets();
-    const interval = setInterval(checkNewCadets, 30000);
-    return () => clearInterval(interval);
+    setStudentName(localStorage.getItem("studentName") || "Candidate");
+    setStudentBatch(localStorage.getItem("studentBatch") || "NDA");
   }, []);
 
-  const handleCadetsClick = () => {
-    localStorage.setItem("cadetsLastChecked", new Date().toISOString());
-    setHasNewCadets(false);
+  const handleLogout = () => {
+    setIsOpen(false);
+    localStorage.removeItem("studentId");
+    localStorage.removeItem("studentName");
+    localStorage.removeItem("studentMobile");
+    localStorage.removeItem("studentBatch");
+    router.push("/");
   };
 
   const menuItems = [
-    { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-    { name: "Create Test", href: "/admin/create-test", icon: PlusCircle },
-    { name: "My Tests", href: "/admin/tests", icon: FileText },
-    { name: "Test Series", href: "/admin/test-series", icon: Package },
-    { name: "Classes", href: "/admin/classes", icon: Video },
-    { name: "Cadets", href: "/admin/cadets", icon: Users, showDot: true }
+    {
+      name: "Mock Tests",
+      href: "/student/dashboard?tab=tests",
+      icon: FileText,
+      isActive: pathname === "/student/dashboard" && activeTab === "tests",
+    },
+    {
+      name: "Paid Test Series",
+      href: "/student/dashboard?tab=series",
+      icon: Package,
+      isActive: pathname === "/student/dashboard" && activeTab === "series",
+    },
+    {
+      name: "Classes",
+      href: "/student/classes",
+      icon: Video,
+      isActive: pathname === "/student/classes",
+    },
   ];
 
   return (
     <>
       {/* Mobile Top Navbar */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0D0F12] text-[#EEF0E8] border-b border-[#2E3B1E] flex items-center justify-between px-4 z-45">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0D0F12] text-[#EEF0E8] border-b border-[#2E3B1E] flex items-center justify-between px-4 z-40">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsOpen(true)}
@@ -57,7 +65,7 @@ export function AdminSidebar() {
           <span className="font-display font-bold text-md tracking-wider uppercase">Officers Saga</span>
         </div>
         <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
-          Briefing
+          {studentBatch} Candidate
         </span>
       </header>
 
@@ -83,7 +91,7 @@ export function AdminSidebar() {
             </div>
             <div>
               <h2 className="font-display font-bold text-md tracking-wider text-[#EEF0E8] uppercase">Officers Saga</h2>
-              <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest">Breifing Room</span>
+              <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest">Candidate Briefing</span>
             </div>
           </div>
           {/* Close button for mobile */}
@@ -96,34 +104,39 @@ export function AdminSidebar() {
           </button>
         </div>
 
+        {/* Candidate Profile Details Card */}
+        <div className="px-5 py-4 border-b border-[#2E3B1E] bg-[#1C2415]/40">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/30 flex items-center justify-center text-xs font-display font-bold text-[#C9A84C]">
+              {studentName.charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-display font-bold uppercase tracking-wider text-[#EEF0E8] truncate">{studentName}</p>
+              <span className="inline-block mt-0.5 bg-[#C9A84C]/10 border border-[#C9A84C]/20 text-[#C9A84C] px-1.5 py-0.2 rounded text-[9px] font-mono font-bold tracking-wide">
+                {studentBatch} BATCH
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Nav Menu */}
         <nav className="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto no-scrollbar">
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
-            const showGreenDot = item.showDot && hasNewCadets;
 
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                onClick={() => {
-                  setIsOpen(false);
-                  if (item.name === "Cadets") {
-                    handleCadetsClick();
-                  }
-                }}
+                onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 text-sm font-display uppercase tracking-wider transition duration-150 border-l-2 ${
-                  isActive
+                  item.isActive
                     ? "bg-[#1C2415] border-[#C9A84C] text-[#C9A84C] font-semibold"
                     : "border-transparent text-[#8B9E6A] hover:bg-[#1C2415]/50 hover:text-[#EEF0E8]"
                 }`}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
                 <span className="flex-1">{item.name}</span>
-                {showGreenDot && (
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#4A7C59] animate-pulse flex-shrink-0"></span>
-                )}
               </Link>
             );
           })}
@@ -132,10 +145,7 @@ export function AdminSidebar() {
         {/* Logout Footer */}
         <div className="p-4 border-t border-[#2E3B1E]">
           <button
-            onClick={() => {
-              setIsOpen(false);
-              signOut({ callbackUrl: "/" });
-            }}
+            onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 text-[#8B9E6A] hover:bg-red-950/40 hover:text-[#D94F3D] rounded transition duration-150 text-left font-display text-sm uppercase tracking-wider"
           >
             <LogOut className="w-4 h-4 flex-shrink-0" />
