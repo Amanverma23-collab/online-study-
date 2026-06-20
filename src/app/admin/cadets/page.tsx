@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
-import { FileDown, Users, Search, Clock, ShieldAlert } from "lucide-react";
+import { FileDown, Users, Search, Clock, ShieldAlert, Trash2, Ban, UserCheck } from "lucide-react";
 import Link from "next/link";
 
 interface Cadet {
@@ -217,19 +217,25 @@ export default function CadetsPage() {
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => handleToggleStatus(cadet.id)}
-                            className={`px-3 py-1.5 rounded text-xs font-display font-bold uppercase tracking-wider transition duration-150 border ${
+                            className={`p-2 rounded transition duration-150 border flex items-center justify-center ${
                               cadet.status === "BANNED"
                                 ? "bg-[#4A7C59]/10 hover:bg-[#4A7C59]/25 text-[#4A7C59] border-[#4A7C59]/25"
                                 : "bg-[#D94F3D]/10 hover:bg-[#D94F3D]/25 text-[#D94F3D] border-[#D94F3D]/25"
                             }`}
+                            title={cadet.status === "BANNED" ? "Verify Cadet" : "Ban Cadet"}
                           >
-                            {cadet.status === "BANNED" ? "Verify Cadet" : "Ban Cadet"}
+                            {cadet.status === "BANNED" ? (
+                              <UserCheck className="w-4 h-4" />
+                            ) : (
+                              <Ban className="w-4 h-4" />
+                            )}
                           </button>
                           <button
                             onClick={() => confirmDelete(cadet)}
-                            className="px-3 py-1.5 rounded text-xs font-display font-bold uppercase tracking-wider transition duration-150 border bg-[#D94F3D] hover:bg-[#C23B2A] text-white border-[#D94F3D] hover:border-[#C23B2A]"
+                            className="p-2 rounded transition duration-155 border bg-[#D94F3D] hover:bg-[#C23B2A] text-white border-[#D94F3D] hover:border-[#C23B2A] flex items-center justify-center"
+                            title="Delete Cadet"
                           >
-                            Delete Cadet
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
