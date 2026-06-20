@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Rajdhani, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
@@ -22,7 +22,22 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Officers Saga - Online NDA & CDS Test Platform",
   description: "India's #1 NDA & CDS Test Platform - Officers Saga Online Exams & Detailed Analysis Portal.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Officers Saga",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
+
+export const viewport: Viewport = {
+  themeColor: "#C9A84C",
+  width: "device-width",
+  initialScale: 1,
+};
+
 
 export default function RootLayout({
   children,
