@@ -24,6 +24,7 @@ interface LiveClass {
   zoomLink: string;
   classDate: string;
   batch: string;
+  isEnded: boolean;
   createdAt: string;
 }
 
@@ -67,6 +68,24 @@ export default function SubjectClassesPage() {
       console.error("Failed to fetch classes:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEndLive = async (id: string) => {
+    if (!confirm("Are you sure you want to end this live class? Students will no longer be able to join.")) return;
+    try {
+      const res = await fetch(`/api/admin/classes/live/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isEnded: true }),
+      });
+      if (res.ok) {
+        setLiveClasses((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, isEnded: true } : c))
+        );
+      }
+    } catch (err) {
+      console.error("End live class failed:", err);
     }
   };
 
@@ -232,14 +251,28 @@ export default function SubjectClassesPage() {
                           </a>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleDeleteLive(cls.id)}
-                        disabled={deletingId === cls.id}
-                        className="p-2 rounded border border-red-100 bg-red-50 text-[#D94F3D] hover:bg-red-100 transition flex-shrink-0 disabled:opacity-50"
-                        title="Delete live class"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-2.5 flex-shrink-0">
+                        {!cls.isEnded ? (
+                          <button
+                            onClick={() => handleEndLive(cls.id)}
+                            className="px-3 py-1.5 rounded border border-[#C9A84C]/30 hover:border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C]/5 text-xs font-display font-bold uppercase tracking-wider transition duration-150"
+                          >
+                            End Class
+                          </button>
+                        ) : (
+                          <span className="inline-flex items-center bg-gray-100 text-gray-400 border border-gray-200 px-2.5 py-1 rounded text-xs font-display font-bold uppercase tracking-wider">
+                            Ended
+                          </span>
+                        )}
+                        <button
+                          onClick={() => handleDeleteLive(cls.id)}
+                          disabled={deletingId === cls.id}
+                          className="p-2 rounded border border-red-100 bg-red-50 text-[#D94F3D] hover:bg-red-100 transition disabled:opacity-50"
+                          title="Delete live class"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>

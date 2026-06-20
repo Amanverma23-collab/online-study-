@@ -24,6 +24,7 @@ interface LiveClass {
   details: string;
   zoomLink: string;
   classDate: string;
+  isEnded?: boolean;
   createdAt: string;
 }
 
@@ -134,9 +135,12 @@ export default function StudentClassesPage() {
     });
   };
 
-  const getClassStatus = (classDate: string) => {
+  const getClassStatus = (cls: LiveClass) => {
+    if (cls.isEnded) {
+      return "past";
+    }
     const now = new Date();
-    const date = new Date(classDate);
+    const date = new Date(cls.classDate);
     const diffMs = date.getTime() - now.getTime();
     const diffMins = diffMs / (1000 * 60);
 
@@ -270,7 +274,7 @@ export default function StudentClassesPage() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredLiveClasses.map((cls) => {
-                    const status = getClassStatus(cls.classDate);
+                    const status = getClassStatus(cls);
                     const countdown = getCountdownText(cls.classDate);
 
                     return (
@@ -320,17 +324,22 @@ export default function StudentClassesPage() {
 
                         <button
                           onClick={() =>
-                            window.open(cls.zoomLink, "_blank")
+                            status !== "past" && window.open(cls.zoomLink, "_blank")
                           }
+                          disabled={status === "past"}
                           className={`w-full mt-4 font-display font-bold uppercase tracking-widest text-xs py-2.5 rounded transition flex items-center justify-center gap-2 ${
                             status === "live"
                               ? "bg-[#D94F3D] text-white hover:bg-[#D94F3D]/90"
+                              : status === "past"
+                              ? "bg-gray-250 border-gray-300 text-gray-400 cursor-not-allowed"
                               : "btn-primary"
                           }`}
                         >
                           <Video className="w-4 h-4" />
                           {status === "live"
                             ? "🔴 Go Live →"
+                            : status === "past"
+                            ? "Class Ended"
                             : "Attend Class →"}
                         </button>
                       </div>

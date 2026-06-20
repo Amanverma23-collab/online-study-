@@ -265,6 +265,7 @@ model LiveClass {
   zoomLink    String
   classDate   DateTime
   batch       String   @default("NDA") // "NDA" | "CDS" | "OTA" | "NDA,CDS" | "NDA,OTA" | "CDS,OTA"
+  isEnded     Boolean  @default(false)
   createdAt   DateTime @default(now())
   adminId     String
   admin       Admin    @relation(fields: [adminId], references: [id])
