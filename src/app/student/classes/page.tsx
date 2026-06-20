@@ -172,15 +172,31 @@ export default function StudentClassesPage() {
     return `in ${mins}m`;
   };
 
-  // Get unique subjects from live classes for filter
+  // Helper to determine if an ended live class is from a past day relative to today in student's local timezone.
+  // Such classes should be automatically hidden at 12:00 AM (midnight) of the day after they are scheduled.
+  const isClassVisible = (cls: LiveClass) => {
+    const status = getClassStatus(cls);
+    if (status !== "past") {
+      return true;
+    }
+    const now = new Date();
+    const classDate = new Date(cls.classDate);
+    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const clsDate = new Date(classDate.getFullYear(), classDate.getMonth(), classDate.getDate());
+    return nowDate.getTime() <= clsDate.getTime();
+  };
+
+  const visibleLiveClasses = liveClasses.filter(isClassVisible);
+
+  // Get unique subjects from visible live classes for filter
   const liveSubjects = Array.from(
-    new Set(liveClasses.map((c) => c.subject))
+    new Set(visibleLiveClasses.map((c) => c.subject))
   );
 
   const filteredLiveClasses =
     liveFilter === "All"
-      ? liveClasses
-      : liveClasses.filter((c) => c.subject === liveFilter);
+      ? visibleLiveClasses
+      : visibleLiveClasses.filter((c) => c.subject === liveFilter);
 
   return (
     <main className="flex-1 p-6 md:p-8 pt-14 md:pt-0 overflow-y-auto h-full flex flex-col no-scrollbar bg-[#F5F3EC]">
