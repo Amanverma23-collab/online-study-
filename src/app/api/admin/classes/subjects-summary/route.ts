@@ -17,7 +17,10 @@ export async function GET(req: Request) {
     const [liveClasses, recordedClasses] = await Promise.all([
       db.liveClass.groupBy({
         by: ["subject"],
-        where: whereClause,
+        where: {
+          ...whereClause,
+          isEnded: false,
+        },
         _count: { id: true },
       }),
       db.recordedClass.groupBy({
