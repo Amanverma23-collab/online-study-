@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isContentVisibleToStudent } from "@/lib/batch";
 
 export async function POST(req: Request) {
   try {
@@ -13,6 +14,7 @@ export async function POST(req: Request) {
     const test = await db.seriesTest.findUnique({
       where: { id: seriesTestId },
       include: {
+        series: true,
         sections: {
           orderBy: { order: "asc" },
           include: { questions: true }
@@ -26,6 +28,24 @@ export async function POST(req: Request) {
 
     if (test.sections.length === 0) {
       return NextResponse.json({ error: "This series test has no sections configured yet." }, { status: 400 });
+    }
+
+    // Fetch student to verify status and batch
+    const student = await db.student.findUnique({
+      where: { id: studentId }
+    });
+
+    if (!student) {
+      return NextResponse.json({ error: "Student not found" }, { status: 404 });
+    }
+
+    if (student.status === "BANNED") {
+      return NextResponse.json({ error: "Access Denied. This candidate account has been banned." }, { status: 403 });
+    }
+
+    // Verify batch compatibility
+    if (!isContentVisibleToStudent(test.series.batch, student.batch)) {
+      return NextResponse.json({ error: "Access Denied. This test series is not available for your batch." }, { status: 403 });
     }
 
     // 2. Verify purchase

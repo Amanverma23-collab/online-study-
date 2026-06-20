@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       adminId = admin.id;
     }
 
-    const { subject, title, details, zoomLink, classDate } = await req.json();
+    const { subject, title, details, zoomLink, classDate, batch } = await req.json();
 
     if (!subject || !title || !details || !zoomLink || !classDate) {
       return NextResponse.json(
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         details,
         zoomLink,
         classDate: new Date(classDate),
+        batch: batch || "NDA",
         adminId,
       },
     });

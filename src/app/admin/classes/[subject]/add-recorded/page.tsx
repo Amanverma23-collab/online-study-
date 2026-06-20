@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, AlertTriangle, CheckCircle, Film } from "lucide-react";
+import { BatchSelect } from "@/components/batch-select";
+import { getActiveBatch } from "@/lib/batch";
 
 export default function AddRecordedClassPage() {
   const params = useParams();
@@ -11,6 +13,7 @@ export default function AddRecordedClassPage() {
   const subject = decodeURIComponent(params.subject as string);
 
   const [className, setClassName] = useState("");
+  const [batch, setBatch] = useState("NDA");
   const [details, setDetails] = useState("");
   const [youtubeLink, setYoutubeLink] = useState("");
   const [notesUrl, setNotesUrl] = useState("");
@@ -18,6 +21,10 @@ export default function AddRecordedClassPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    setBatch(getActiveBatch());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +42,7 @@ export default function AddRecordedClassPage() {
           youtubeLink,
           notesUrl: notesUrl || null,
           notesName: notesName || null,
+          batch,
         }),
       });
 
@@ -115,6 +123,12 @@ export default function AddRecordedClassPage() {
                 required
               />
             </div>
+
+            <BatchSelect
+              label="Target Exam/Batch"
+              value={batch}
+              onChange={setBatch}
+            />
 
             <div>
               <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">

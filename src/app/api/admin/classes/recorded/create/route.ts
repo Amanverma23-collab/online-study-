@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       adminId = admin.id;
     }
 
-    const { subject, className, details, youtubeLink, notesUrl, notesName } =
+    const { subject, className, details, youtubeLink, notesUrl, notesName, batch } =
       await req.json();
 
     if (!subject || !className || !details || !youtubeLink) {
@@ -39,6 +39,7 @@ export async function POST(req: Request) {
         youtubeLink,
         notesUrl: notesUrl || null,
         notesName: notesName || null,
+        batch: batch || "NDA",
         adminId,
       },
     });

@@ -2,9 +2,18 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import * as XLSX from "xlsx";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const batch = searchParams.get("batch");
+
+    const where: any = {};
+    if (batch && batch !== "ALL") {
+      where.batch = batch;
+    }
+
     const students = await db.student.findMany({
+      where,
       include: {
         attempts: {
           select: {

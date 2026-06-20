@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
+import { BatchSelect } from "@/components/batch-select";
+import { getActiveBatch } from "@/lib/batch";
 import { useRouter } from "next/navigation";
 import { Upload, AlertTriangle, FileText, ArrowRight, ArrowLeft, ShieldCheck, Check } from "lucide-react";
 
@@ -24,7 +26,12 @@ export default function CreateTestPage() {
 
   // Step 1 states
   const [title, setTitle] = useState("");
-  const [targetBatch, setTargetBatch] = useState("NDA"); // "NDA" | "CDS" | "OTA"
+  const [targetBatch, setTargetBatch] = useState("NDA"); // comma-separated, e.g. "NDA" | "CDS,OTA"
+
+  // Pre-fill batch from the admin's currently-active batch on first load
+  useEffect(() => {
+    setTargetBatch(getActiveBatch());
+  }, []);
   const [defaultMarksPerQ, setDefaultMarksPerQ] = useState("0.833");
   const [defaultNegativeMarks, setDefaultNegativeMarks] = useState("0.27489");
   const [cutoffMarks, setCutoffMarks] = useState("45");
@@ -84,10 +91,11 @@ export default function CreateTestPage() {
     let resolved = [...selectedSubjects];
     if (selectedSubjects.includes("Full Mock")) {
       resolved = resolved.filter((s) => s !== "Full Mock");
+      const batches = targetBatch.split(",").map((b) => b.trim());
       const additional: string[] = [];
-      if (targetBatch === "NDA" || targetBatch === "CDS") {
+      if (batches.includes("NDA") || batches.includes("CDS")) {
         additional.push("General Knowledge", "Mathematics", "English");
-      } else if (targetBatch === "OTA") {
+      } else if (batches.includes("OTA")) {
         additional.push("General Knowledge", "English");
       }
       additional.forEach((sub) => {
@@ -103,6 +111,7 @@ export default function CreateTestPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
+          batch: targetBatch,
           defaultMarksPerQ,
           defaultNegativeMarks,
           cutoffMarks
@@ -383,20 +392,11 @@ export default function CreateTestPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">
-                    Target Exam/Batch
-                  </label>
-                  <select
-                    value={targetBatch}
-                    onChange={(e) => setTargetBatch(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border border-[#DDD8CC] rounded focus:outline-none focus:ring-1 focus:ring-[#C9A84C] focus:border-[#C9A84C] text-sm font-semibold bg-white"
-                  >
-                    <option value="NDA">NDA</option>
-                    <option value="CDS">CDS</option>
-                    <option value="OTA">OTA</option>
-                  </select>
-                </div>
+                <BatchSelect
+                  label="Target Exam/Batch"
+                  value={targetBatch}
+                  onChange={setTargetBatch}
+                />
 
                 <div>
                   <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">

@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, AlertTriangle, CheckCircle, Radio } from "lucide-react";
+import { BatchSelect } from "@/components/batch-select";
+import { getActiveBatch } from "@/lib/batch";
 
 export default function AddLiveClassPage() {
   const params = useParams();
@@ -11,12 +13,17 @@ export default function AddLiveClassPage() {
   const subject = decodeURIComponent(params.subject as string);
 
   const [title, setTitle] = useState("");
+  const [batch, setBatch] = useState("NDA");
   const [details, setDetails] = useState("");
   const [zoomLink, setZoomLink] = useState("");
   const [classDate, setClassDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    setBatch(getActiveBatch());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +40,7 @@ export default function AddLiveClassPage() {
           details,
           zoomLink,
           classDate,
+          batch,
         }),
       });
 
@@ -111,6 +119,12 @@ export default function AddLiveClassPage() {
                 required
               />
             </div>
+
+            <BatchSelect
+              label="Target Exam/Batch"
+              value={batch}
+              onChange={setBatch}
+            />
 
             <div>
               <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">

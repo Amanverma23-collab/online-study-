@@ -1,16 +1,38 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isContentVisibleToStudent } from "@/lib/batch";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const subjects = await db.recordedClass.groupBy({
-      by: ["subject"],
-      _count: { id: true },
+    const { searchParams } = new URL(req.url);
+    const studentId = searchParams.get("studentId");
+
+    if (!studentId) {
+      return NextResponse.json([]);
+    }
+
+    const student = await db.student.findUnique({
+      where: { id: studentId }
     });
 
-    const result = subjects.map((g) => ({
-      subject: g.subject,
-      count: g._count.id,
+    if (!student || student.status === "BANNED") {
+      return NextResponse.json([]);
+    }
+
+    const allRecorded = await db.recordedClass.findMany();
+    
+    const visibleRecorded = allRecorded.filter((c) =>
+      isContentVisibleToStudent(c.batch, student.batch)
+    );
+
+    const subjectCounts: Record<string, number> = {};
+    visibleRecorded.forEach((c) => {
+      subjectCounts[c.subject] = (subjectCounts[c.subject] || 0) + 1;
+    });
+
+    const result = Object.entries(subjectCounts).map(([subject, count]) => ({
+      subject,
+      count,
     }));
 
     return NextResponse.json(result);

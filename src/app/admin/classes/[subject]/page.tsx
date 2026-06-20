@@ -23,6 +23,7 @@ interface LiveClass {
   details: string;
   zoomLink: string;
   classDate: string;
+  batch: string;
   createdAt: string;
 }
 
@@ -34,6 +35,7 @@ interface RecordedClass {
   youtubeLink: string;
   notesUrl: string | null;
   notesName: string | null;
+  batch: string;
   createdAt: string;
 }
 
@@ -203,8 +205,13 @@ export default function SubjectClassesPage() {
                       className="p-5 flex items-start justify-between gap-4 hover:bg-gray-50/50 transition"
                     >
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-display font-bold text-sm text-[#0D0F12] uppercase truncate">
-                          {cls.title}
+                        <h4 className="font-display font-bold text-sm text-[#0D0F12] uppercase truncate flex items-center gap-2">
+                          <span>{cls.title}</span>
+                          {cls.batch && (
+                            <span className="bg-[#C9A84C]/10 border border-[#C9A84C]/25 text-[#C9A84C] text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">
+                              {cls.batch.split(",").join(" + ")}
+                            </span>
+                          )}
                         </h4>
                         <p className="text-xs text-[#8B9E6A] font-semibold mt-1 line-clamp-2">
                           {cls.details}
@@ -263,8 +270,13 @@ export default function SubjectClassesPage() {
                       className="p-5 flex items-start justify-between gap-4 hover:bg-gray-50/50 transition"
                     >
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-display font-bold text-sm text-[#0D0F12] uppercase truncate">
-                          {cls.className}
+                        <h4 className="font-display font-bold text-sm text-[#0D0F12] uppercase truncate flex items-center gap-2">
+                          <span>{cls.className}</span>
+                          {cls.batch && (
+                            <span className="bg-[#C9A84C]/10 border border-[#C9A84C]/25 text-[#C9A84C] text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">
+                              {cls.batch.split(",").join(" + ")}
+                            </span>
+                          )}
                         </h4>
                         <p className="text-xs text-[#8B9E6A] font-semibold mt-1 line-clamp-2">
                           {cls.details}

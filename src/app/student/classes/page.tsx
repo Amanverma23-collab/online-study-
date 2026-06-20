@@ -59,6 +59,7 @@ const subjectIcons: Record<string, string> = {
 
 export default function StudentClassesPage() {
   const router = useRouter();
+  const [studentId, setStudentId] = useState("");
   const [studentName, setStudentName] = useState("");
   const [studentBatch, setStudentBatch] = useState("NDA");
   const [activeTab, setActiveTab] = useState<"live" | "recorded">("live");
@@ -86,16 +87,17 @@ export default function StudentClassesPage() {
       router.push("/");
       return;
     }
+    setStudentId(sId);
     setStudentName(sName);
     setStudentBatch(sBatch);
-    fetchInitialData();
+    fetchInitialData(sId);
   }, []);
 
-  const fetchInitialData = async () => {
+  const fetchInitialData = async (sId: string) => {
     try {
       const [liveRes, subjectsRes] = await Promise.all([
-        fetch("/api/classes/live"),
-        fetch("/api/classes/recorded/subjects"),
+        fetch(`/api/classes/live?studentId=${sId}`),
+        fetch(`/api/classes/recorded/subjects?studentId=${sId}`),
       ]);
       setLiveClasses(await liveRes.json());
       setRecordedSubjects(await subjectsRes.json());
@@ -111,7 +113,7 @@ export default function StudentClassesPage() {
     setSelectedRecordedSubject(subject);
     try {
       const res = await fetch(
-        `/api/classes/recorded?subject=${encodeURIComponent(subject)}`
+        `/api/classes/recorded?subject=${encodeURIComponent(subject)}&studentId=${studentId}`
       );
       setRecordedClasses(await res.json());
     } catch (err) {

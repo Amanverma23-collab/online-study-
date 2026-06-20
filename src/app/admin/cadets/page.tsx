@@ -23,13 +23,14 @@ export default function CadetsPage() {
   const [selectedBatch, setSelectedBatch] = useState("ALL");
 
   useEffect(() => {
-    fetchCadets();
+    fetchCadets(selectedBatch);
     localStorage.setItem("cadetsLastChecked", new Date().toISOString());
-  }, []);
+  }, [selectedBatch]);
 
-  const fetchCadets = async () => {
+  const fetchCadets = async (batch: string) => {
     try {
-      const res = await fetch("/api/admin/cadets");
+      const url = batch === "ALL" ? "/api/admin/cadets" : `/api/admin/cadets?batch=${batch}`;
+      const res = await fetch(url);
       const data = await res.json();
       if (Array.isArray(data)) {
         setCadets(data);
@@ -81,7 +82,7 @@ export default function CadetsPage() {
             </p>
           </div>
           <a
-            href="/api/admin/cadets/export"
+            href={selectedBatch === "ALL" ? "/api/admin/cadets/export" : `/api/admin/cadets/export?batch=${selectedBatch}`}
             download
             className="bg-[#4A7C59] hover:bg-[#4A7C59]/90 text-[#EEF0E8] px-5 py-2.5 rounded font-display font-bold uppercase tracking-wider text-xs shadow transition duration-150 flex items-center gap-2 max-w-max"
           >

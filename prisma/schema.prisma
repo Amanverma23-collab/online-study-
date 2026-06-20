@@ -41,6 +41,7 @@ model Test {
   marksPerQ     Float         // default
   isLive        Boolean       @default(false)
   cutoffMarks   Float?
+  batch         String        @default("NDA") // "NDA" | "CDS" | "OTA" | "NDA,CDS" | "NDA,OTA" | "CDS,OTA"
   createdAt     DateTime      @default(now())
   adminId       String
   admin         Admin         @relation(fields: [adminId], references: [id])
@@ -263,6 +264,7 @@ model LiveClass {
   details     String   @db.Text
   zoomLink    String
   classDate   DateTime
+  batch       String   @default("NDA") // "NDA" | "CDS" | "OTA" | "NDA,CDS" | "NDA,OTA" | "CDS,OTA"
   createdAt   DateTime @default(now())
   adminId     String
   admin       Admin    @relation(fields: [adminId], references: [id])
@@ -276,6 +278,7 @@ model RecordedClass {
   youtubeLink  String
   notesUrl     String?
   notesName    String?
+  batch        String   @default("NDA") // "NDA" | "CDS" | "OTA" | "NDA,CDS" | "NDA,OTA" | "CDS,OTA"
   createdAt    DateTime @default(now())
   adminId      String
   admin        Admin    @relation(fields: [adminId], references: [id])

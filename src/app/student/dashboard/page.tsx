@@ -85,9 +85,9 @@ function StudentDashboardContent() {
   const fetchDashboardData = async (sId: string, sBatch: string) => {
     try {
       const [liveRes, attemptsRes, seriesRes, enrolledRes] = await Promise.all([
-        fetch("/api/tests/live"),
+        fetch(`/api/tests/live?studentId=${sId}`),
         fetch(`/api/student/${sId}/attempts`),
-        fetch("/api/series/live"),
+        fetch(`/api/series/live?studentId=${sId}`),
         fetch(`/api/student/${sId}/purchased-series`)
       ]);
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isContentVisibleToStudent } from "@/lib/batch";
 
 export async function POST(req: Request) {
   try {
@@ -37,6 +38,10 @@ export async function POST(req: Request) {
 
     if (student.status === "BANNED") {
       return NextResponse.json({ error: "Access Denied. This candidate account has been banned." }, { status: 403 });
+    }
+
+    if (!isContentVisibleToStudent(test.batch, student.batch)) {
+      return NextResponse.json({ error: "Access Denied. This mock test is not available for your batch." }, { status: 403 });
     }
 
     const existingAttempt = await db.attempt.findUnique({

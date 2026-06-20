@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
+import { BatchSelect } from "@/components/batch-select";
+import { getActiveBatch } from "@/lib/batch";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, AlertTriangle, Plus, X } from "lucide-react";
 
@@ -13,18 +15,16 @@ export default function CreateTestSeriesPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [selectedBatches, setSelectedBatches] = useState<string[]>([]);
+  const [batch, setBatch] = useState("NDA"); // comma-separated, e.g. "NDA" | "CDS,OTA"
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [customSubject, setCustomSubject] = useState("");
 
-  const batchOptions = ["NDA", "CDS", "OTA"];
   const defaultSubjects = ["Mathematics", "General Knowledge", "English", "Physics", "Chemistry", "Reasoning", "Current Affairs", "Biology", "Full Mock"];
 
-  const handleBatchChange = (batch: string) => {
-    setSelectedBatches((prev) =>
-      prev.includes(batch) ? prev.filter((b) => b !== batch) : [...prev, batch]
-    );
-  };
+  // Pre-fill batch from the admin's currently-active batch on first load
+  useEffect(() => {
+    setBatch(getActiveBatch());
+  }, []);
 
   const handleSubjectChange = (subject: string) => {
     setSelectedSubjects((prev) =>
@@ -47,7 +47,7 @@ export default function CreateTestSeriesPage() {
     e.preventDefault();
     setError("");
 
-    if (selectedBatches.length === 0) {
+    if (!batch) {
       setError("Please select at least one batch category.");
       return;
     }
@@ -59,12 +59,13 @@ export default function CreateTestSeriesPage() {
 
     setLoading(true);
 
+    const batches = batch.split(",").map((b) => b.trim());
     let finalSubjects = [...selectedSubjects];
     if (selectedSubjects.includes("Full Mock")) {
       finalSubjects = finalSubjects.filter((s) => s !== "Full Mock");
       
-      const hasNdaOrCds = selectedBatches.includes("NDA") || selectedBatches.includes("CDS");
-      const hasOta = selectedBatches.includes("OTA");
+      const hasNdaOrCds = batches.includes("NDA") || batches.includes("CDS");
+      const hasOta = batches.includes("OTA");
       
       const additional: string[] = [];
       if (hasNdaOrCds) {
@@ -87,7 +88,7 @@ export default function CreateTestSeriesPage() {
         body: JSON.stringify({
           title,
           description,
-          batch: selectedBatches,
+          batch: batches,
           price: parseFloat(price),
           subjects: finalSubjects
         })
@@ -159,22 +160,11 @@ export default function CreateTestSeriesPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-2.5">Target Batches (Select Multiple)</label>
-                <div className="flex flex-wrap gap-4">
-                  {batchOptions.map((b) => (
-                    <label key={b} className="flex items-center gap-2 text-sm font-semibold cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedBatches.includes(b)}
-                        onChange={() => handleBatchChange(b)}
-                        className="accent-[#C9A84C] w-4 h-4"
-                      />
-                      <span>{b}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+              <BatchSelect
+                label="Target Exam/Batch"
+                value={batch}
+                onChange={setBatch}
+              />
 
               <div>
                 <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">Bundle Price (INR)</label>

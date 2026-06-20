@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       adminId = admin.id;
     }
 
-    const { title, defaultMarksPerQ, defaultNegativeMarks, cutoffMarks } = await req.json();
+    const { title, batch, defaultMarksPerQ, defaultNegativeMarks, cutoffMarks } = await req.json();
 
     if (!title || defaultMarksPerQ === undefined || defaultNegativeMarks === undefined) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
     const newTest = await db.test.create({
       data: {
         title,
+        batch: batch || "NDA",
         duration: 0, // aggregate duration, starts at 0 and is summed as sections are added / published
         marksPerQ: parseFloat(defaultMarksPerQ),
         negativeMarks: parseFloat(defaultNegativeMarks),

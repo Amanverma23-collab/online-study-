@@ -13,6 +13,7 @@ interface Test {
   isLive: boolean;
   totalMarks: number;
   createdAt: string;
+  batch: string;
   _count: {
     questions: number;
     attempts: number;
@@ -109,6 +110,7 @@ export default function MyTestsPage() {
                     <tr className="bg-gray-50 border-b border-[#DDD8CC] text-[#8B9E6A] font-display font-bold text-xs uppercase tracking-wider">
                       <th className="px-6 py-4">Test Title</th>
                       <th className="px-6 py-4">Subject</th>
+                      <th className="px-6 py-4 text-center">Batch</th>
                       <th className="px-6 py-4 text-center">Questions</th>
                       <th className="px-6 py-4 text-center">Duration</th>
                       <th className="px-6 py-4 text-center">Total Marks</th>
@@ -125,6 +127,15 @@ export default function MyTestsPage() {
                           <span className="bg-gray-100 border border-gray-200 text-[#0D0F12] px-2.5 py-1 rounded text-xs uppercase font-display font-bold tracking-wider">
                             {test.subject}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <div className="flex flex-wrap justify-center gap-1">
+                            {(test.batch ? test.batch.split(",") : ["NDA"]).map((b) => (
+                              <span key={b} className="bg-[#C9A84C]/10 border border-[#C9A84C]/25 text-[#C9A84C] text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">
+                                {b}
+                              </span>
+                            ))}
+                          </div>
                         </td>
                         <td className="px-6 py-4 text-center font-display font-bold text-md">{test._count.questions}</td>
                         <td className="px-6 py-4 text-center text-gray-500 font-mono">{test.duration} mins</td>

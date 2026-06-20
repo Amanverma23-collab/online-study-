@@ -5,11 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Star, LayoutDashboard, PlusCircle, FileText, LogOut, Users, Package, Menu, X, Video } from "lucide-react";
+import { SINGLE_BATCHES, getActiveBatch, setActiveBatch, type SingleBatch } from "@/lib/batch";
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const [hasNewCadets, setHasNewCadets] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [activeBatch, setActiveBatchState] = useState<SingleBatch>("NDA");
+
+  useEffect(() => {
+    setActiveBatchState(getActiveBatch());
+  }, []);
+
+  const handleBatchChange = (batch: SingleBatch) => {
+    setActiveBatchState(batch);
+    setActiveBatch(batch);
+  };
 
   useEffect(() => {
     const checkNewCadets = async () => {
@@ -56,9 +67,21 @@ export function AdminSidebar() {
           </button>
           <span className="font-display font-bold text-md tracking-wider uppercase">Officers Saga</span>
         </div>
-        <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
-          Briefing
-        </span>
+        <label className="flex items-center gap-1.5 bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
+          <span className="text-[9px] text-[#8B9E6A] font-display font-bold uppercase tracking-widest">Batch</span>
+          <select
+            value={activeBatch}
+            onChange={(e) => handleBatchChange(e.target.value as SingleBatch)}
+            className="bg-transparent text-[#C9A84C] text-[11px] font-display font-bold uppercase tracking-wider focus:outline-none cursor-pointer"
+            aria-label="Active Batch"
+          >
+            {SINGLE_BATCHES.map((b) => (
+              <option key={b} value={b} className="bg-[#0D0F12] text-[#EEF0E8]">
+                {b}
+              </option>
+            ))}
+          </select>
+        </label>
       </header>
 
       {/* Backdrop overlay for mobile drawer */}
@@ -94,6 +117,28 @@ export function AdminSidebar() {
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Active Batch switcher — drives default pre-fill on creation forms */}
+        <div className="px-5 py-4 border-b border-[#2E3B1E] bg-[#1C2415]/40">
+          <label className="block text-[10px] text-[#8B9E6A] font-display font-bold uppercase tracking-widest mb-1.5">
+            Active Batch
+          </label>
+          <div className="flex gap-1.5">
+            {SINGLE_BATCHES.map((b) => (
+              <button
+                key={b}
+                onClick={() => handleBatchChange(b)}
+                className={`flex-1 py-2 rounded text-xs font-display font-bold uppercase tracking-wider transition border ${
+                  activeBatch === b
+                    ? "bg-[#C9A84C] border-[#C9A84C] text-[#0D0F12]"
+                    : "bg-transparent border-[#2E3B1E] text-[#8B9E6A] hover:text-[#EEF0E8] hover:border-[#C9A84C]/40"
+                }`}
+              >
+                {b}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Nav Menu */}
