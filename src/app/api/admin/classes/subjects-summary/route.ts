@@ -1,15 +1,28 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const batch = searchParams.get("batch");
+
+    const whereClause = batch
+      ? {
+          batch: {
+            contains: batch,
+          },
+        }
+      : {};
+
     const [liveClasses, recordedClasses] = await Promise.all([
       db.liveClass.groupBy({
         by: ["subject"],
+        where: whereClause,
         _count: { id: true },
       }),
       db.recordedClass.groupBy({
         by: ["subject"],
+        where: whereClause,
         _count: { id: true },
       }),
     ]);

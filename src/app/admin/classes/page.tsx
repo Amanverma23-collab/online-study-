@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import Link from "next/link";
 import { Video, Radio, Film, ArrowRight } from "lucide-react";
+import { useActiveBatch } from "@/contexts/ActiveBatchContext";
 
 interface SubjectSummary {
   subject: string;
@@ -39,13 +40,18 @@ const subjectIcons: Record<string, string> = {
 };
 
 export default function ClassesHubPage() {
+  const { activeBatch } = useActiveBatch();
   const [summaryData, setSummaryData] = useState<SubjectSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchSummary() {
+      setLoading(true);
       try {
-        const res = await fetch("/api/admin/classes/subjects-summary");
+        const url = activeBatch
+          ? `/api/admin/classes/subjects-summary?batch=${encodeURIComponent(activeBatch)}`
+          : "/api/admin/classes/subjects-summary";
+        const res = await fetch(url);
         const data = await res.json();
         setSummaryData(data);
       } catch (err) {
@@ -55,7 +61,7 @@ export default function ClassesHubPage() {
       }
     }
     fetchSummary();
-  }, []);
+  }, [activeBatch]);
 
   const getSummary = (subject: string) => {
     return (
