@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useActiveBatch } from "@/contexts/ActiveBatchContext";
 import {
   ArrowLeft,
   Radio,
@@ -44,11 +45,34 @@ export default function SubjectClassesPage() {
   const params = useParams();
   const router = useRouter();
   const subject = decodeURIComponent(params.subject as string);
+  const { activeBatch } = useActiveBatch();
 
   const [liveClasses, setLiveClasses] = useState<LiveClass[]>([]);
   const [recordedClasses, setRecordedClasses] = useState<RecordedClass[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const visibleLiveClasses = activeBatch
+    ? liveClasses.filter((c) =>
+        c.batch
+          ? c.batch
+              .split(",")
+              .map((b) => b.trim())
+              .includes(activeBatch)
+          : false
+      )
+    : liveClasses;
+
+  const visibleRecordedClasses = activeBatch
+    ? recordedClasses.filter((c) =>
+        c.batch
+          ? c.batch
+              .split(",")
+              .map((b) => b.trim())
+              .includes(activeBatch)
+          : false
+      )
+    : recordedClasses;
 
   useEffect(() => {
     fetchClasses();
@@ -205,20 +229,20 @@ export default function SubjectClassesPage() {
               <div className="p-6 border-b border-[#DDD8CC] bg-gray-50/50 rounded-t-[6px] flex items-center gap-2.5">
                 <Radio className="w-4 h-4 text-[#2C6E8A]" />
                 <h2 className="font-display font-bold text-md uppercase tracking-wider text-[#0D0F12]">
-                  Live Classes ({liveClasses.length})
+                  Live Classes ({visibleLiveClasses.length})
                 </h2>
               </div>
 
-              {liveClasses.length === 0 ? (
+              {visibleLiveClasses.length === 0 ? (
                 <div className="p-10 text-center text-gray-400">
                   <Radio className="w-10 h-10 mx-auto mb-3 text-gray-300" />
                   <p className="font-display font-semibold uppercase tracking-wider text-sm">
-                    No live classes scheduled
+                    No live classes found
                   </p>
                 </div>
               ) : (
                 <div className="divide-y divide-[#DDD8CC]">
-                  {liveClasses.map((cls) => (
+                  {visibleLiveClasses.map((cls) => (
                     <div
                       key={cls.id}
                       className="p-5 flex items-start justify-between gap-4 hover:bg-gray-50/50 transition"
@@ -284,20 +308,20 @@ export default function SubjectClassesPage() {
               <div className="p-6 border-b border-[#DDD8CC] bg-gray-50/50 rounded-t-[6px] flex items-center gap-2.5">
                 <Film className="w-4 h-4 text-[#4A7C59]" />
                 <h2 className="font-display font-bold text-md uppercase tracking-wider text-[#0D0F12]">
-                  Recorded Classes ({recordedClasses.length})
+                  Recorded Classes ({visibleRecordedClasses.length})
                 </h2>
               </div>
 
-              {recordedClasses.length === 0 ? (
+              {visibleRecordedClasses.length === 0 ? (
                 <div className="p-10 text-center text-gray-400">
                   <Film className="w-10 h-10 mx-auto mb-3 text-gray-300" />
                   <p className="font-display font-semibold uppercase tracking-wider text-sm">
-                    No recorded classes uploaded
+                    No recorded classes found
                   </p>
                 </div>
               ) : (
                 <div className="divide-y divide-[#DDD8CC]">
-                  {recordedClasses.map((cls) => (
+                  {visibleRecordedClasses.map((cls) => (
                     <div
                       key={cls.id}
                       className="p-5 flex items-start justify-between gap-4 hover:bg-gray-50/50 transition"

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { Play, Square, Trash2, Trophy, FileText, Plus } from "lucide-react";
 import Link from "next/link";
+import { useActiveBatch } from "@/contexts/ActiveBatchContext";
 
 interface Test {
   id: string;
@@ -21,8 +22,20 @@ interface Test {
 }
 
 export default function MyTestsPage() {
+  const { activeBatch } = useActiveBatch();
   const [tests, setTests] = useState<Test[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const visibleTests = activeBatch
+    ? tests.filter((test) =>
+        test.batch
+          ? test.batch
+              .split(",")
+              .map((b) => b.trim())
+              .includes(activeBatch)
+          : false
+      )
+    : tests;
 
   useEffect(() => {
     fetchTests();
@@ -91,7 +104,7 @@ export default function MyTestsPage() {
           </div>
         ) : (
           <div className="bg-white rounded-[6px] border border-[#DDD8CC] shadow-sm">
-            {tests.length === 0 ? (
+            {visibleTests.length === 0 ? (
               <div className="p-16 text-center text-gray-400">
                 <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                 <h3 className="font-display font-bold text-lg text-navy mb-1 uppercase">No Tests Found</h3>
@@ -120,7 +133,7 @@ export default function MyTestsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#DDD8CC] text-sm font-semibold">
-                    {tests.map((test) => (
+                    {visibleTests.map((test) => (
                       <tr key={test.id} className="hover:bg-gray-50/50 transition duration-100">
                         <td className="px-6 py-4 font-bold text-[#0D0F12]">{test.title}</td>
                         <td className="px-6 py-4">

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { FileText, Radio, Users, CheckCircle, ArrowRight, Play, Square, Trophy, Plus, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { useActiveBatch } from "@/contexts/ActiveBatchContext";
 
 interface Stats {
   totalTests: number;
@@ -30,6 +31,7 @@ interface Test {
 }
 
 export default function AdminDashboard() {
+  const { activeBatch } = useActiveBatch();
   const [stats, setStats] = useState<Stats>({
     totalTests: 0,
     liveTests: 0,
@@ -40,6 +42,17 @@ export default function AdminDashboard() {
   });
   const [recentTests, setRecentTests] = useState<Test[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const visibleTests = activeBatch
+    ? recentTests.filter((test) =>
+        test.batch
+          ? test.batch
+              .split(",")
+              .map((b) => b.trim())
+              .includes(activeBatch)
+          : false
+      )
+    : recentTests;
 
   useEffect(() => {
     async function fetchData() {
@@ -163,10 +176,10 @@ export default function AdminDashboard() {
                 </Link>
               </div>
 
-              {recentTests.length === 0 ? (
+              {visibleTests.length === 0 ? (
                 <div className="p-12 text-center text-gray-400">
                   <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p className="font-display font-semibold uppercase tracking-wider text-sm">No exam templates created</p>
+                  <p className="font-display font-semibold uppercase tracking-wider text-sm">No exam templates found</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -183,7 +196,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#DDD8CC] text-sm font-semibold">
-                      {recentTests.map((test) => (
+                      {visibleTests.map((test) => (
                         <tr key={test.id} className="hover:bg-gray-50/50 transition duration-100">
                           <td className="px-6 py-4 font-bold text-[#0D0F12]">{test.title}</td>
                           <td className="px-6 py-4">

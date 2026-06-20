@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, Eye, ToggleLeft, ToggleRight, Package, AlertTriangle, ListCollapse, Award } from "lucide-react";
+import { useActiveBatch } from "@/contexts/ActiveBatchContext";
 
 interface TestEntry {
   id: string;
@@ -26,9 +27,14 @@ interface TestSeries {
 
 export default function AdminTestSeriesPage() {
   const router = useRouter();
+  const { activeBatch } = useActiveBatch();
   const [seriesList, setSeriesList] = useState<TestSeries[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const visibleSeries = activeBatch
+    ? seriesList.filter((s) => s.batch && s.batch.includes(activeBatch))
+    : seriesList;
 
   useEffect(() => {
     fetchSeries();
@@ -118,10 +124,10 @@ export default function AdminTestSeriesPage() {
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C9A84C]"></div>
           </div>
-        ) : seriesList.length === 0 ? (
+        ) : visibleSeries.length === 0 ? (
           <div className="bg-white rounded-[6px] border border-[#DDD8CC] p-16 text-center shadow-sm">
             <Package className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <h3 className="font-display font-bold text-lg uppercase text-navy mb-1">No Test Series Created Yet</h3>
+            <h3 className="font-display font-bold text-lg uppercase text-navy mb-1">No Test Series Found</h3>
             <p className="text-xs text-[#8B9E6A] font-semibold">Deploy a new sequential briefing test series for NDA/CDS candidates.</p>
           </div>
         ) : (
@@ -140,7 +146,7 @@ export default function AdminTestSeriesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#DDD8CC] text-sm font-semibold text-[#0D0F12]">
-                  {seriesList.map((s) => (
+                  {visibleSeries.map((s) => (
                     <tr key={s.id} className="hover:bg-gray-50/50 transition">
                       <td className="px-6 py-4 max-w-xs">
                         <div className="font-bold text-sm text-[#0D0F12] uppercase tracking-wide truncate">{s.title}</div>

@@ -5,21 +5,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Star, LayoutDashboard, PlusCircle, FileText, LogOut, Users, Package, Menu, X, Video } from "lucide-react";
-import { SINGLE_BATCHES, getActiveBatch, setActiveBatch, type SingleBatch } from "@/lib/batch";
+import { SINGLE_BATCHES, type SingleBatch } from "@/lib/batch";
+import { useActiveBatch } from "@/contexts/ActiveBatchContext";
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const [hasNewCadets, setHasNewCadets] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeBatch, setActiveBatchState] = useState<SingleBatch>("NDA");
+  const { activeBatch, setActiveBatch } = useActiveBatch();
 
-  useEffect(() => {
-    setActiveBatchState(getActiveBatch());
-  }, []);
-
-  const handleBatchChange = (batch: SingleBatch) => {
-    setActiveBatchState(batch);
-    setActiveBatch(batch);
+  const handleBatchChange = (batch: SingleBatch | null) => {
+    if (activeBatch === batch) {
+      setActiveBatch(null);
+    } else {
+      setActiveBatch(batch);
+    }
   };
 
   useEffect(() => {
@@ -70,11 +70,14 @@ export function AdminSidebar() {
         <label className="flex items-center gap-1.5 bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
           <span className="text-[9px] text-[#8B9E6A] font-display font-bold uppercase tracking-widest">Batch</span>
           <select
-            value={activeBatch}
-            onChange={(e) => handleBatchChange(e.target.value as SingleBatch)}
+            value={activeBatch || ""}
+            onChange={(e) => handleBatchChange((e.target.value || null) as SingleBatch | null)}
             className="bg-transparent text-[#C9A84C] text-[11px] font-display font-bold uppercase tracking-wider focus:outline-none cursor-pointer"
             aria-label="Active Batch"
           >
+            <option value="" className="bg-[#0D0F12] text-[#EEF0E8]">
+              ALL
+            </option>
             {SINGLE_BATCHES.map((b) => (
               <option key={b} value={b} className="bg-[#0D0F12] text-[#EEF0E8]">
                 {b}

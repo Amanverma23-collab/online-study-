@@ -40,7 +40,7 @@ export function formatBatchLabel(contentBatchString: string | null | undefined):
     .join(" + ");
 }
 
-const ACTIVE_BATCH_KEY = "adminActiveBatch";
+export const ACTIVE_BATCH_KEY = "adminActiveBatch";
 
 /** Reads the admin's currently-focused batch from localStorage (default "NDA"). Client-only. */
 export function getActiveBatch(): SingleBatch {
