@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isContentVisibleToStudent } from "@/lib/batch";
 
 export async function GET(
   req: Request,
@@ -7,6 +8,18 @@ export async function GET(
 ) {
   try {
     const studentId = params.id;
+
+    const student = await db.student.findUnique({
+      where: { id: studentId }
+    });
+
+    if (!student) {
+      return NextResponse.json({ error: "Student not found" }, { status: 404 });
+    }
+
+    if (student.status === "BANNED") {
+      return NextResponse.json({ error: "Access Denied. This candidate account has been banned." }, { status: 403 });
+    }
 
     const purchases = await db.seriesPurchase.findMany({
       where: {
@@ -24,7 +37,11 @@ export async function GET(
       }
     });
 
-    const formatted = purchases.map((p) => ({
+    const visiblePurchases = purchases.filter((p) =>
+      isContentVisibleToStudent(p.series.batch, student.batch)
+    );
+
+    const formatted = visiblePurchases.map((p) => ({
       purchaseId: p.id,
       purchasedAt: p.purchasedAt,
       amount: p.amount,
@@ -41,3 +58,4 @@ export async function GET(
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+

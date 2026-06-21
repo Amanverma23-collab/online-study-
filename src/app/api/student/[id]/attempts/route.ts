@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { isContentVisibleToStudent } from "@/lib/batch";
 
 export async function GET(
   req: Request,
@@ -40,7 +41,12 @@ export async function GET(
       orderBy: { startedAt: "desc" }
     });
 
-    const formattedAttempts = attempts.map(att => {
+    const visibleAttempts = attempts.filter((att) => {
+      if (!att.test) return false;
+      return isContentVisibleToStudent(att.test.batch, student.batch);
+    });
+
+    const formattedAttempts = visibleAttempts.map(att => {
       if (!att.test) return att;
       const subjectsList = att.test.sections.map(s => s.subject).join(", ");
       const totalMarks = att.test.sections.reduce((sum, sec) => sum + (sec.marksPerQ * sec._count.questions), 0);
