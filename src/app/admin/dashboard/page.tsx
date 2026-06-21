@@ -56,9 +56,11 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       try {
+        const batchParam = activeBatch ? `?batch=${activeBatch}` : "";
         const [statsRes, testsRes] = await Promise.all([
-          fetch("/api/admin/stats"),
+          fetch(`/api/admin/stats${batchParam}`),
           fetch("/api/tests")
         ]);
         const statsData = await statsRes.json();
@@ -74,7 +76,7 @@ export default function AdminDashboard() {
     }
 
     fetchData();
-  }, []);
+  }, [activeBatch]);
 
   const handleToggleLive = async (testId: string) => {
     try {
