@@ -203,8 +203,8 @@ export default function StudentClassesPage() {
       {/* Header */}
       <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-6 md:-mx-8 px-6 md:px-8 pt-0 md:pt-6 mt-0 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
         <div>
-          <h1 className="page-title text-[#0D0F12] uppercase font-bold !text-[5.2vw] sm:!text-xl md:!text-2xl !tracking-tight sm:!tracking-normal whitespace-nowrap">
-            Live & Recorded Classes
+          <h1 className="page-title text-[#0D0F12] uppercase font-bold !text-[6.8vw] sm:!text-xl md:!text-2xl !tracking-tight sm:!tracking-normal whitespace-nowrap">
+            Live & Recorded Class
           </h1>
           <p className="text-sm text-[#8B9E6A] font-body mt-1">
             Attend live Zoom sessions & view unlisted class archives
