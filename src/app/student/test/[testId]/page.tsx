@@ -563,7 +563,7 @@ export default function StudentTestInterface({ params }: { params: { testId: str
 
               <div className="bg-[#1C2415] p-4 sm:p-6 rounded border border-[#2E3B1E] shadow-sm mb-4 sm:mb-6">
                 <h2 className="flex gap-2">
-                  <span className="font-display font-bold text-md text-[#C9A84C] mt-0.5">Q {currentIndex + 1}.</span>
+                  <span className="font-display font-bold text-md text-[#C9A84C] mt-0.5 whitespace-nowrap flex-shrink-0">Q {currentIndex + 1}.</span>
                   <span className="question-text text-[#EEF0E8]">{currentQuestion.questionText}</span>
                 </h2>
               </div>
@@ -854,7 +854,7 @@ export default function StudentTestInterface({ params }: { params: { testId: str
         {/* 3. QUESTION STATS ROW */}
         <div className="bg-[#0D0F12] border-b border-[#2E3B1E] px-4 py-2 flex justify-between items-center h-10 flex-shrink-0 text-xs font-semibold text-[#8B9E6A]">
           <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-[#EEF0E8] text-sm">Q. {currentIndex + 1}</span>
+            <span className="font-display font-bold text-[#EEF0E8] text-sm whitespace-nowrap flex-shrink-0">Q. {currentIndex + 1}</span>
             <span className="text-[10px] px-1.5 py-0.5 bg-[#4A7C59]/10 text-[#4A7C59] border border-[#4A7C59]/25 rounded-sm">
               +{currentSection.marksPerQ.toFixed(1)}
             </span>

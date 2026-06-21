@@ -1080,7 +1080,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
               <div className="flex justify-between items-start border-b border-gray-100 pb-3 mb-4 gap-4 flex-shrink-0">
                 <div>
                   <h3 className="font-display font-bold text-sm text-[#0D0F12] flex items-start gap-2.5">
-                    <span className="bg-[#0D0F12] text-[#EEF0E8] px-2 py-0.5 rounded-sm text-[10px] mt-0.5 font-mono font-bold">
+                    <span className="bg-[#0D0F12] text-[#EEF0E8] px-2 py-0.5 rounded-sm text-[10px] mt-0.5 font-mono font-bold whitespace-nowrap flex-shrink-0">
                       Q {activeQuestion.order}
                     </span>
                     <span className="text-[10px] bg-gray-100 text-[#8B9E6A] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded mt-0.5 inline-block">
