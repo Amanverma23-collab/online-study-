@@ -219,29 +219,29 @@ export default function StudentClassesPage() {
       ) : (
         <div className="flex-1 flex flex-col min-h-0">
           {/* Tab Buttons */}
-          <div className="flex border-b border-[#DDD8CC] mb-8 font-display font-bold uppercase tracking-wider text-sm">
+          <div className="flex w-full border-b border-[#DDD8CC] mb-8 font-display font-bold uppercase tracking-wider text-xs sm:text-sm">
             <button
               onClick={() => setActiveTab("live")}
-              className={`px-8 py-3.5 text-center border-b-2 transition flex items-center gap-2 ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-8 py-3.5 text-center justify-center border-b-2 transition flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === "live"
                   ? "border-[#C9A84C] text-[#C9A84C]"
                   : "border-transparent text-[#8B9E6A] hover:text-[#0D0F12]"
               }`}
             >
-              <Radio className="w-4 h-4" /> Live Class
+              <Radio className="w-4 h-4 flex-shrink-0" /> Live Class
             </button>
             <button
               onClick={() => {
                 setActiveTab("recorded");
                 setSelectedRecordedSubject(null);
               }}
-              className={`px-8 py-3.5 text-center border-b-2 transition flex items-center gap-2 ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-8 py-3.5 text-center justify-center border-b-2 transition flex items-center gap-1.5 sm:gap-2 whitespace-nowrap ${
                 activeTab === "recorded"
                   ? "border-[#C9A84C] text-[#C9A84C]"
                   : "border-transparent text-[#8B9E6A] hover:text-[#0D0F12]"
               }`}
             >
-              <Film className="w-4 h-4" /> Recorded Class
+              <Film className="w-4 h-4 flex-shrink-0" /> Recorded Class
             </button>
           </div>
 
@@ -476,7 +476,7 @@ export default function StudentClassesPage() {
                               className="btn-secondary flex-1 md:flex-initial text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 whitespace-nowrap"
                             >
                               <FileText className="w-3.5 h-3.5 flex-shrink-0" />
-                              {cls.notesName || "Class Notes"} 📄
+                              Notes 📄
                             </a>
                           ) : (
                             <span className="flex-1 md:flex-initial text-center text-xs font-display font-bold uppercase tracking-wider text-gray-400 px-3 py-2.5 border border-gray-200 rounded bg-gray-50 cursor-not-allowed whitespace-nowrap">
