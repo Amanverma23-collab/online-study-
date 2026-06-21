@@ -7,8 +7,9 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Live & Recorded Classes, Test Series for competitive exams",
     start_url: "/",
     display: "standalone",
-    background_color: "#0E0E10",
+    background_color: "#0D0F12",
     theme_color: "#C9A84C",
+    orientation: "portrait",
     icons: [
       {
         src: "/icons/icon-192x192.png",
