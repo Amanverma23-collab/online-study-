@@ -224,15 +224,15 @@ export default function SeriesTestsPage({ params }: { params: { seriesId: string
                   {/* Actions row — full width on mobile, inline on desktop */}
                   <div className="mt-4 pl-[3.125rem] sm:pl-[3.125rem]">
                     {isCompleted ? (
-                      <div className="flex items-center justify-between gap-3 rounded-[6px] bg-[#4A7C59]/5 border border-[#4A7C59]/15 px-4 py-2.5">
-                        <div className="flex items-baseline gap-1.5">
+                      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[6px] bg-[#4A7C59]/5 border border-[#4A7C59]/15 px-4 py-2.5">
+                        <div className="flex items-baseline gap-1.5 flex-shrink-0">
                           <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-wider">Score</span>
                           <span className="font-mono text-base font-extrabold text-[#4A7C59]">{test.score?.toFixed(2)}</span>
                           <span className="text-[10px] text-gray-400 font-medium">/ {totalMarks.toFixed(0)}</span>
                         </div>
                         <Link
                           href={`/student/series/${seriesId}/result/${test.attemptId}`}
-                          className="flex-shrink-0 bg-[#C9A84C]/10 border border-[#C9A84C]/25 hover:bg-[#C9A84C]/20 text-[#C9A84C] px-3.5 py-2 rounded text-xs font-display font-bold uppercase tracking-wider transition flex items-center gap-1 shadow-sm"
+                          className="flex-shrink-0 bg-[#C9A84C]/10 border border-[#C9A84C]/25 hover:bg-[#C9A84C]/20 text-[#C9A84C] px-3.5 py-2 rounded text-xs font-display font-bold uppercase tracking-wider transition flex items-center gap-1 shadow-sm whitespace-nowrap"
                         >
                           View Result <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
@@ -243,7 +243,13 @@ export default function SeriesTestsPage({ params }: { params: { seriesId: string
                         disabled={startingTestId !== null}
                         className="w-full sm:w-auto bg-[#C9A84C] hover:bg-[#C9A84C]/90 disabled:bg-[#C9A84C]/65 text-[#0D0F12] px-6 py-3 rounded text-xs font-display font-bold uppercase tracking-wider transition flex items-center justify-center gap-1.5 shadow"
                       >
-                        <Play className="w-3.5 h-3.5 fill-current" /> {startingTestId === test.id ? "Launching..." : "Start Test"}
+                        {test.attemptId ? (
+                          <>⏸ {startingTestId === test.id ? "Launching..." : "Resume Test"}</>
+                        ) : (
+                          <>
+                            <Play className="w-3.5 h-3.5 fill-current" /> {startingTestId === test.id ? "Launching..." : "Start Test"}
+                          </>
+                        )}
                       </button>
                     ) : (
                       <div className="w-full sm:w-auto flex items-center justify-center gap-1.5 text-gray-400 font-display font-bold uppercase tracking-wider text-xs px-4 py-2.5 border border-dashed border-gray-300 bg-gray-50 rounded select-none cursor-not-allowed">

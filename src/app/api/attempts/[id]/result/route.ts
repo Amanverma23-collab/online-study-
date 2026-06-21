@@ -80,8 +80,10 @@ export async function GET(
 
     const maxSec = test.duration * 60;
 
+    const totalTakers = allAttempts.length;
+
     // Helper to calculate statistics for any attempt
-    const calculateAttemptStats = (att: typeof allAttempts[0]) => {
+    const attemptsWithMetrics = allAttempts.map((att) => {
       let correct = 0;
       let incorrect = 0;
       let unattempted = 0;
@@ -106,13 +108,24 @@ export async function GET(
         unattempted,
         timeSpent: timeSpentSec,
         accuracy: correct + incorrect > 0 ? Math.round((correct / (correct + incorrect)) * 100) : 0,
-        rank: att.rank || 0,
-        percentile: totalMarks > 0 ? ((att.totalScore || 0) / totalMarks) * 100 : 0,
-        totalTakers: att.totalTakers || allAttempts.length
       };
-    };
+    });
 
-    const allStats = allAttempts.map(calculateAttemptStats);
+    const allStats = attemptsWithMetrics.map((att) => {
+      const rank = attemptsWithMetrics.filter(other => 
+        other.score > att.score || 
+        (other.score === att.score && other.timeSpent < att.timeSpent)
+      ).length + 1;
+
+      const percentile = totalTakers > 1 ? ((totalTakers - rank) / totalTakers) * 100 : 100;
+
+      return {
+        ...att,
+        rank,
+        percentile: parseFloat(percentile.toFixed(2)),
+        totalTakers
+      };
+    });
 
     // Get "You" stats
     const youStats = allStats.find((s) => s.id === attemptId)!;

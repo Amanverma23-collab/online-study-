@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trophy, Star, Award, CheckCircle2, Percent, Users2, ChevronUp, ChevronDown, Check, X, ShieldAlert, ArrowLeft, User, BookOpen, Clock, MapPin, List, Bookmark, ChevronRight } from "lucide-react";
+import { Trophy, Star, Award, CheckCircle2, Percent, Users2, ChevronUp, ChevronDown, Check, X, ShieldAlert, ArrowLeft, User, BookOpen, Clock, MapPin, List, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface StatRow {
@@ -660,8 +660,8 @@ export default function ResultAnalysisPage({ params }: { params: { attemptId: st
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[9px] text-gray-400 font-semibold font-body block leading-none">Topper Rank</span>
-                  <span className="font-display font-bold text-sm text-[#8B4A6E] mt-1 block leading-none">1st</span>
+                  <span className="text-[9px] text-gray-400 font-semibold font-body block leading-none">Topper Score</span>
+                  <span className="font-display font-bold text-sm text-[#8B4A6E] mt-1 block leading-none font-mono">{data.topper.score.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -847,12 +847,6 @@ export default function ResultAnalysisPage({ params }: { params: { attemptId: st
                             <span className="text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A]">
                               {q.subject}
                             </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[9px] font-body text-gray-405 font-semibold">
-                              {accuracyGotRight}% got it right
-                            </span>
-                            <Bookmark className="w-3.5 h-3.5 text-gray-300" />
                           </div>
                         </div>
                         

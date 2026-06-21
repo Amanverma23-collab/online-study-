@@ -77,7 +77,10 @@ export async function GET(
     const maxSec = test.duration * 60;
 
     // Helper to calculate statistics for any attempt
-    const calculateAttemptStats = (att: typeof allAttempts[0]) => {
+    const totalTakers = allAttempts.length;
+
+    // Helper to calculate statistics for any attempt
+    const attemptsWithMetrics = allAttempts.map((att) => {
       let correct = 0;
       let incorrect = 0;
       let unattempted = 0;
@@ -93,12 +96,6 @@ export async function GET(
       let timeSpentSec = Math.floor((submitted - started) / 1000);
       if (timeSpentSec > maxSec) timeSpentSec = maxSec;
 
-      const rank = att.rank || 1;
-      const totalTakers = Math.max(allAttempts.length, 1);
-      const percentile = totalMarks > 0 
-        ? ((att.score || 0) / totalMarks) * 100 
-        : 0;
-
       return {
         id: att.id,
         studentName: att.student?.name || student.name,
@@ -108,66 +105,60 @@ export async function GET(
         unattempted,
         timeSpent: timeSpentSec,
         accuracy: correct + incorrect > 0 ? Math.round((correct / (correct + incorrect)) * 100) : 0,
+      };
+    });
+
+    const allStats = attemptsWithMetrics.map((att) => {
+      const rank = attemptsWithMetrics.filter(other => 
+        other.score > att.score || 
+        (other.score === att.score && other.timeSpent < att.timeSpent)
+      ).length + 1;
+
+      const percentile = totalTakers > 1 ? ((totalTakers - rank) / totalTakers) * 100 : 100;
+
+      return {
+        ...att,
         rank,
-        percentile,
+        percentile: parseFloat(percentile.toFixed(2)),
         totalTakers
       };
+    });
+
+    const youStats = allStats.find((s) => s.id === attemptId)!;
+
+    // Get "Topper" (highest score, ties broken by faster timeSpent)
+    const topperStats = [...allStats].sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.timeSpent - b.timeSpent;
+    })[0];
+
+    // Get "Avg"
+    const total = allStats.length;
+    const avgScore = allStats.reduce((s, a) => s + a.score, 0) / total;
+    const avgCorrect = allStats.reduce((s, a) => s + a.correct, 0) / total;
+    const avgWrong = allStats.reduce((s, a) => s + a.incorrect, 0) / total;
+    const avgTime = allStats.reduce((s, a) => s + a.timeSpent, 0) / total;
+    const avgAccuracy = allStats.reduce((s, a) => s + a.accuracy, 0) / total;
+
+    const avgStats = {
+      score: parseFloat(avgScore.toFixed(2)),
+      correct: parseFloat(avgCorrect.toFixed(2)),
+      incorrect: parseFloat(avgWrong.toFixed(2)),
+      timeSpent: Math.round(avgTime),
+      accuracy: parseFloat(avgAccuracy.toFixed(2))
     };
 
-    const youStats = calculateAttemptStats(currentAttempt);
-    const allStats = allAttempts.map(calculateAttemptStats);
-
-    let topperStats = youStats;
-    let avgStats = {
-      score: youStats.score,
-      correct: youStats.correct,
-      incorrect: youStats.incorrect,
-      timeSpent: youStats.timeSpent,
-      accuracy: youStats.accuracy
-    };
-    let topRankers: any[] = [];
-
-    if (allStats.length > 0) {
-      topperStats = [...allStats].sort((a, b) => {
+    const topRankers = allStats
+      .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return a.timeSpent - b.timeSpent;
-      })[0];
-
-      const total = allStats.length;
-      const avgScore = allStats.reduce((s, a) => s + a.score, 0) / total;
-      const avgCorrect = allStats.reduce((s, a) => s + a.correct, 0) / total;
-      const avgWrong = allStats.reduce((s, a) => s + a.incorrect, 0) / total;
-      const avgTime = allStats.reduce((s, a) => s + a.timeSpent, 0) / total;
-      const avgAccuracy = allStats.reduce((s, a) => s + a.accuracy, 0) / total;
-
-      avgStats = {
-        score: parseFloat(avgScore.toFixed(2)),
-        correct: parseFloat(avgCorrect.toFixed(2)),
-        incorrect: parseFloat(avgWrong.toFixed(2)),
-        timeSpent: Math.round(avgTime),
-        accuracy: parseFloat(avgAccuracy.toFixed(2))
-      };
-
-      topRankers = allStats
-        .sort((a, b) => {
-          if (b.score !== a.score) return b.score - a.score;
-          return a.timeSpent - b.timeSpent;
-        })
-        .slice(0, 10)
-        .map((s, index) => ({
-          rank: index + 1,
-          name: s.studentName,
-          score: s.score
-        }));
-    } else {
-      topRankers = [
-        {
-          rank: 1,
-          name: youStats.studentName,
-          score: youStats.score
-        }
-      ];
-    }
+      })
+      .slice(0, 10)
+      .map((s, index) => ({
+        rank: index + 1,
+        name: s.studentName,
+        score: s.score
+      }));
 
     // Question-wise review detailed list
     const questionReview = flatQuestions.map((q) => {

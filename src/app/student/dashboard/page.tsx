@@ -132,7 +132,7 @@ function StudentDashboardContent() {
   };
 
   const getAttemptForTest = (testId: string) => {
-    return attempts.find((a) => a.testId === testId && a.submittedAt !== null);
+    return attempts.find((a) => a.testId === testId);
   };
 
   const isEnrolled = (seriesId: string) => {
@@ -308,9 +308,25 @@ function StudentDashboardContent() {
                           </p>
                         </div>
                         {pastAttempt ? (
-                          <Link href={`/student/result/${pastAttempt.id}`} className="w-full btn-secondary text-center font-bold font-display tracking-widest text-xs py-2 uppercase">View Result</Link>
+                          pastAttempt.submittedAt ? (
+                            <div className="flex flex-col gap-2">
+                              <div className="text-xs font-display font-semibold text-[#8B9E6A] flex justify-between items-center bg-[#F5F3EC] px-3 py-1.5 rounded flex-wrap gap-2">
+                                <span>SCORE: <span className="font-mono text-[#C9A84C] font-semibold">{pastAttempt.score?.toFixed(2) ?? "0.00"} / {test.totalMarks.toFixed(2)}</span></span>
+                                <span>RANK: <span className="font-mono text-navy font-semibold">{pastAttempt.rank ?? "-"}</span></span>
+                              </div>
+                              <Link href={`/student/result/${pastAttempt.id}`} className="w-full btn-secondary text-center font-bold font-display tracking-widest text-[11px] py-2 uppercase whitespace-nowrap flex-shrink-0">
+                                View Result
+                              </Link>
+                            </div>
+                          ) : (
+                            <button onClick={() => handleStartTest(test.id)} className="w-full bg-[#C9A84C] hover:bg-[#C9A84C]/95 text-[#0D0F12] font-bold font-display tracking-widest text-xs py-2.5 uppercase rounded-sm transition flex items-center justify-center gap-1.5 shadow-sm">
+                              ⏸ RESUME TEST
+                            </button>
+                          )
                         ) : (
-                          <button onClick={() => handleStartTest(test.id)} className="w-full btn-primary font-bold font-display tracking-widest text-xs py-2 uppercase">Start Test →</button>
+                          <button onClick={() => handleStartTest(test.id)} className="w-full btn-primary font-bold font-display tracking-widest text-xs py-2 uppercase">
+                            ▶ START TEST
+                          </button>
                         )}
                       </div>
                     );

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { User, Info, BookOpen, ChevronLeft, ChevronRight, Check, X, Clock } from "lucide-react";
+import { User, Info, BookOpen, ChevronLeft, ChevronRight, Check, X, Clock, AlertCircle } from "lucide-react";
 
 interface Question {
   id: string;
@@ -58,6 +58,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
+  const [showForceSubmitModal, setShowForceSubmitModal] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const questionTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -131,7 +132,6 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
       setCurrentSection(sectionData.section);
       setAllSections(sectionData.allSections || []);
       setQuestions(sectionData.questions || []);
-      setCurrentIndex(0);
 
       // Initialize question states
       const loadedAnswers = sectionData.answers || [];
@@ -145,8 +145,16 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
         };
       });
 
-      if (sectionData.questions[0]) {
-        initialStates[sectionData.questions[0].id].isVisited = true;
+      // Find the first unanswered question index in the section (default to 0)
+      const firstUnansweredIndex = sectionData.questions.findIndex((q: Question) => {
+        const prevAns = loadedAnswers.find((ans: any) => ans.questionId === q.id);
+        return !prevAns || !prevAns.selected;
+      });
+      const startIndex = firstUnansweredIndex !== -1 ? firstUnansweredIndex : 0;
+      setCurrentIndex(startIndex);
+
+      if (sectionData.questions[startIndex]) {
+        initialStates[sectionData.questions[startIndex].id].isVisited = true;
       }
 
       setQStates(initialStates);
@@ -269,6 +277,41 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
       }
     } catch (err) {
       console.error("Manual submit failure:", err);
+      alert("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleFullTestSubmit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+
+    try {
+      const payloadAnswers = questions.map((q) => ({
+        questionId: q.id,
+        selected: qStates[q.id]?.selected || null,
+        isMarked: qStates[q.id]?.isMarked || false,
+        isVisited: qStates[q.id]?.isVisited || false
+      }));
+
+      const res = await fetch(`/api/series-attempts/${attemptId}/force-submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sectionId: currentSection?.id, answers: payloadAnswers })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setShowForceSubmitModal(false);
+        if (data.finished) {
+          router.push(data.redirectTo);
+        }
+      } else {
+        alert(data.error || "Failed to submit test. Please try again.");
+      }
+    } catch (err) {
+      console.error("Force submit failure:", err);
       alert("Network error. Please try again.");
     } finally {
       setSubmitting(false);
@@ -730,20 +773,12 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
             </div>
 
             <div className="p-4 border-t border-[#2E3B1E] space-y-3 bg-[#0D0F12]/60">
-              <div className="grid grid-cols-2 gap-2 text-xs font-display font-bold uppercase tracking-wider text-gray-700">
-                <button
-                  onClick={() => alert("Mark correct answers and select Save & Next. Timer will auto submit at 00:00.")}
-                  className="w-full py-2 bg-transparent border border-[#2E3B1E] hover:border-[#8B9E6A] text-[#8B9E6A] transition rounded-sm"
-                >
-                  Instructions
-                </button>
-                <button
-                  onClick={() => alert("NDA/CDS Exam Question Paper compilation.")}
-                  className="w-full py-2 bg-transparent border border-[#2E3B1E] hover:border-[#8B9E6A] text-[#8B9E6A] transition rounded-sm"
-                >
-                  Question Paper
-                </button>
-              </div>
+              <button
+                onClick={() => setShowForceSubmitModal(true)}
+                className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-sm text-xs tracking-wider transition uppercase"
+              >
+                Submit Test
+              </button>
               
               <button
                 onClick={() => setShowSubmitModal(true)}
@@ -876,7 +911,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
         </div>
 
         {/* 5. STICKY ACTIONS FOOTER */}
-        <footer className="fixed bottom-0 inset-x-0 bg-[#1C2415] border-t border-[#2E3B1E] px-4 py-3 flex justify-between items-center z-30 h-14 flex-shrink-0">
+        <footer className="fixed bottom-0 inset-x-0 bg-[#1C2415] border-t border-[#2E3B1E] px-4 py-3 flex justify-between items-center z-30 flex-shrink-0" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
           <div className="flex gap-2">
             {currentState.isMarked ? (
               <button
@@ -1044,20 +1079,12 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
         </div>
 
         <div className="p-4 border-t border-[#2E3B1E] space-y-3 bg-[#0D0F12]/60">
-          <div className="grid grid-cols-2 gap-2 text-xs font-display font-bold uppercase tracking-wider text-gray-700">
-            <button
-              onClick={() => alert("Mark correct answers and select Save & Next. Timer will auto submit at 00:00.")}
-              className="w-full py-2 bg-transparent border border-[#2E3B1E] hover:border-[#8B9E6A] text-[#8B9E6A] transition rounded-sm"
-            >
-              Instructions
-            </button>
-            <button
-              onClick={() => alert("NDA/CDS Exam Question Paper compilation.")}
-              className="w-full py-2 bg-transparent border border-[#2E3B1E] hover:border-[#8B9E6A] text-[#8B9E6A] transition rounded-sm"
-            >
-              Question Paper
-            </button>
-          </div>
+          <button
+            onClick={() => setShowForceSubmitModal(true)}
+            className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-sm text-xs tracking-wider transition uppercase"
+          >
+            Submit Test
+          </button>
           
           <button
             onClick={() => setShowSubmitModal(true)}
@@ -1118,6 +1145,41 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
                 className="flex-1 btn-primary py-2.5 text-xs font-bold"
               >
                 {submitting ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. FORCE SUBMIT MODAL */}
+      {showForceSubmitModal && (
+        <div className="fixed inset-0 bg-[#0D0F12]/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#1C2415] rounded border border-[#2E3B1E] w-full max-w-md p-6 shadow-2xl">
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-[#2E3B1E] border border-red-500 text-red-500 rounded flex items-center justify-center mx-auto mb-3 shadow">
+                <AlertCircle className="w-6 h-6" />
+              </div>
+              <h3 className="font-display font-bold text-xl uppercase tracking-wider text-[#EEF0E8]">
+                Submit Entire Test?
+              </h3>
+              <p className="text-xs text-[#8B9E6A] font-semibold mt-1">
+                Are you sure you want to submit the entire test now? Remaining sections will be marked as unattempted. This cannot be undone.
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowForceSubmitModal(false)}
+                className="flex-1 btn-secondary py-2.5 text-xs"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleFullTestSubmit}
+                disabled={submitting}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 text-xs font-bold rounded uppercase tracking-wider transition"
+              >
+                {submitting ? "Submitting..." : "Submit Test"}
               </button>
             </div>
           </div>
