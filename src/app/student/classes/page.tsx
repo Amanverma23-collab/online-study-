@@ -442,7 +442,7 @@ export default function StudentClassesPage() {
                   {recordedClasses.map((cls) => (
                     <div
                       key={cls.id}
-                      className="bg-white rounded-[6px] border border-[#DDD8CC] p-6 shadow-sm hover:shadow-md transition"
+                      className="bg-white rounded-[6px] border border-[#DDD8CC] p-4 sm:p-6 shadow-sm hover:shadow-md transition"
                     >
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div className="flex-1 min-w-0">
@@ -458,14 +458,14 @@ export default function StudentClassesPage() {
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="flex items-center gap-2 w-full md:w-auto flex-shrink-0">
                           <button
                             onClick={() =>
                               window.open(cls.youtubeLink, "_blank")
                             }
-                            className="btn-primary text-xs py-2 px-4 flex items-center gap-1.5"
+                            className="btn-primary flex-1 md:flex-initial text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 whitespace-nowrap"
                           >
-                            <ExternalLink className="w-3.5 h-3.5" />
+                            <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
                             View Class →
                           </button>
                           {cls.notesUrl ? (
@@ -473,13 +473,13 @@ export default function StudentClassesPage() {
                               href={cls.notesUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="btn-secondary text-xs py-2 px-4 flex items-center gap-1.5"
+                              className="btn-secondary flex-1 md:flex-initial text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 whitespace-nowrap"
                             >
-                              <FileText className="w-3.5 h-3.5" />
+                              <FileText className="w-3.5 h-3.5 flex-shrink-0" />
                               {cls.notesName || "Class Notes"} 📄
                             </a>
                           ) : (
-                            <span className="text-xs font-display font-bold uppercase tracking-wider text-gray-400 px-4 py-2 border border-gray-200 rounded bg-gray-50 cursor-not-allowed">
+                            <span className="flex-1 md:flex-initial text-center text-xs font-display font-bold uppercase tracking-wider text-gray-400 px-3 py-2.5 border border-gray-200 rounded bg-gray-50 cursor-not-allowed whitespace-nowrap">
                               No Notes
                             </span>
                           )}
