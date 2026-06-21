@@ -203,7 +203,7 @@ export default function StudentClassesPage() {
       {/* Header */}
       <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-6 md:-mx-8 px-6 md:px-8 pt-0 md:pt-6 mt-0 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
         <div>
-          <h1 className="page-title text-[#0D0F12] uppercase font-bold !text-[6.3vw] sm:!text-xl md:!text-2xl !tracking-tight sm:!tracking-normal whitespace-nowrap">
+          <h1 className="page-title text-[#0D0F12] uppercase font-bold !text-[7.6vw] sm:!text-xl md:!text-2xl !tracking-tight sm:!tracking-normal whitespace-nowrap">
             <span className="sm:hidden">Live and Recorded Class</span>
             <span className="hidden sm:inline">Live & Recorded Class</span>
           </h1>
