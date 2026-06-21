@@ -82,7 +82,7 @@ export default function ClassesHubPage() {
           <div>
             <h1 className="page-title text-[#0D0F12]">Classes</h1>
             <p className="text-sm text-[#8B9E6A] font-body mt-1">
-              Manage live Zoom sessions and recorded class videos by subject
+              Manage live Zoom sessions & recorded class videos by subject
             </p>
           </div>
         </div>

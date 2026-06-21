@@ -173,7 +173,7 @@ export default function SubjectClassesPage() {
           </button>
           <h1 className="page-title text-[#0D0F12]">{subject}</h1>
           <p className="text-sm text-[#8B9E6A] font-body mt-1">
-            Manage live sessions and recorded classes for {subject}
+            Manage live sessions & recorded classes for {subject}
           </p>
         </div>
 
