@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import * as pdf from "pdf-parse";
-import { OpenAI } from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(
   req: Request,
@@ -28,50 +28,58 @@ export async function POST(
     }
 
     let questions = [];
+    let jsonText = "";
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey && apiKey.trim().length > 0) {
       try {
-        const openai = new OpenAI({ apiKey });
-        const response = await openai.chat.completions.create({
-          model: "gpt-4o",
-          messages: [
-            {
-              role: "system",
-              content: `You are an MCQ extractor for Indian competitive exams (NDA/CDS). 
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({
+          model: "gemini-flash-latest",
+          generationConfig: { responseMimeType: "application/json" }
+        });
+
+        const prompt = `You are an MCQ extractor for Indian competitive exams (NDA/CDS). 
 Extract all multiple choice questions, their correct answers, and explanations (if any) from the text provided by the user.
 Look carefully at the text for any indicating marks, answer keys, bold text, or explicit answer lists to determine the correctOption.
 Return ONLY a valid JSON array of objects. Do not include markdown codeblocks or backticks.
 Each object must represent a question and have the following exact schema:
-{
-  "order": <number representing 1-based index of question>,
-  "questionText": "<full question text>",
-  "optionA": "<option A text>",
-  "optionB": "<option B text>",
-  "optionC": "<option C text>",
-  "optionD": "<option D text>",
-  "correctOption": "<correct option letter, must be A, B, C, or D. If the correct option is not found in the text, leave as empty string \"\">",
-  "explanation": "<detailed explanation of the answer if available in the text; otherwise empty string \"\">"
-}
-Return a pure JSON array containing the extracted questions.`
-            },
-            {
-              role: "user",
-              content: parsedText.slice(0, 12000) // limit context size
-            }
-          ]
-        });
+[
+  {
+    "order": <number representing 1-based index of question>,
+    "questionText": "<full question text>",
+    "optionA": "<option A text>",
+    "optionB": "<option B text>",
+    "optionC": "<option C text>",
+    "optionD": "<option D text>",
+    "correctOption": "<correct option letter, must be A, B, C, or D. If the correct option is not found in the text, leave as empty string \"\">",
+    "explanation": "<detailed explanation of the answer if available in the text; otherwise empty string \"\">"
+  }
+]
 
-        const content = response.choices[0]?.message?.content || "[]";
-        // Clean JSON format in case markdown block returned
-        const cleanedContent = content.replace(/```json/g, "").replace(/```/g, "").trim();
-        questions = JSON.parse(cleanedContent);
-      } catch (openAiError) {
-        console.error("OpenAI Extractor Error, falling back to mock questions:", openAiError);
-        questions = generateFallbackQuestions(parsedText);
+Text:
+${parsedText.slice(0, 12000)}`;
+
+        const result = await model.generateContent(prompt);
+        jsonText = result.response.text();
+        questions = JSON.parse(jsonText);
+      } catch (geminiError: any) {
+        console.error("Gemini Extractor Error:", geminiError);
+
+        let userMessage = 'Failed to process file upload. Please try again.';
+
+        if (geminiError.message?.includes('RESOURCE_EXHAUSTED') || geminiError.message?.includes('429')) {
+          userMessage = 'Too many requests right now (daily free limit may be reached). Please try again in a few minutes or tomorrow.';
+        } else if (geminiError.message?.includes('API_KEY_INVALID') || geminiError.message?.includes('401')) {
+          userMessage = 'AI service configuration issue. Please contact support.';
+        } else if (geminiError.message?.includes('empty') || jsonText?.trim() === '') {
+          userMessage = 'Could not read text from this PDF — it may be a scanned image without selectable text. Try a different PDF or use the Excel upload option instead.';
+        }
+
+        return NextResponse.json({ error: userMessage }, { status: 500 });
       }
     } else {
-      console.log("No OPENAI_API_KEY found, returning fallback mock questions.");
+      console.log("No GEMINI_API_KEY found, returning fallback mock questions.");
       questions = generateFallbackQuestions(parsedText);
     }
 
@@ -85,6 +93,7 @@ Return a pure JSON array containing the extracted questions.`
     return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
+
 
 function generateFallbackQuestions(text: string) {
   const questions: any[] = [];
