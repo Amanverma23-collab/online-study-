@@ -45,6 +45,30 @@ async function main() {
     });
     console.log("Teacher admin password updated successfully.");
   }
+
+  // Seed new teacher credentials (officers@gmail.com)
+  const officersAdmin = await prisma.admin.findUnique({
+    where: { email: 'officers@gmail.com' }
+  });
+
+  if (!officersAdmin) {
+    const passwordHash = await bcrypt.hash('officers@123', 10);
+    const admin = await prisma.admin.create({
+      data: {
+        email: 'officers@gmail.com',
+        password: passwordHash,
+        name: 'Teacher Admin'
+      }
+    });
+    console.log("Teacher admin officers@gmail.com seeded successfully:", admin.email);
+  } else {
+    const passwordHash = await bcrypt.hash('officers@123', 10);
+    await prisma.admin.update({
+      where: { email: 'officers@gmail.com' },
+      data: { password: passwordHash }
+    });
+    console.log("Teacher admin officers@gmail.com password updated/verified successfully.");
+  }
 }
 
 main()
