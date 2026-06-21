@@ -1,6 +1,8 @@
 {
   "name": "officers-saga",
   "version": "0.1.0",
+  "description": "Officers Saga - Online NDA & CDS Test Prep Platform",
+  "author": "Officers Saga",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -52,3 +52,10 @@ public/workbox-*.js.map
 public/swe-worker-*.js
 public/swe-worker-*.js.map
 
+# AI/Editor configurations
+.antigravity
+.claude
+.cursor
+.copilot
+ai-config.json
+
