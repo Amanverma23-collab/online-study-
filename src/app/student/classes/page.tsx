@@ -463,7 +463,7 @@ export default function StudentClassesPage() {
                             onClick={() =>
                               window.open(cls.youtubeLink, "_blank")
                             }
-                            className="btn-primary flex-1 md:flex-initial text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                            className="btn-primary flex-1 md:flex-initial !text-[11px] md:!text-xs !py-2 !px-2.5 md:!py-2.5 md:!px-4 flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap"
                           >
                             <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
                             View Class →
@@ -473,13 +473,13 @@ export default function StudentClassesPage() {
                               href={cls.notesUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="btn-secondary flex-1 md:flex-initial text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 whitespace-nowrap"
+                              className="btn-secondary flex-1 md:flex-initial !text-[11px] md:!text-xs !py-2 !px-2.5 md:!py-2.5 md:!px-4 flex items-center justify-center gap-1 sm:gap-1.5 whitespace-nowrap"
                             >
                               <FileText className="w-3.5 h-3.5 flex-shrink-0" />
                               Notes 📄
                             </a>
                           ) : (
-                            <span className="flex-1 md:flex-initial text-center text-xs font-display font-bold uppercase tracking-wider text-gray-400 px-3 py-2.5 border border-gray-200 rounded bg-gray-50 cursor-not-allowed whitespace-nowrap">
+                            <span className="flex-1 md:flex-initial text-center !text-[11px] md:!text-xs font-display font-bold uppercase tracking-wider text-gray-400 !px-2.5 !py-2 md:!px-4 md:!py-2.5 border border-gray-200 rounded bg-gray-50 cursor-not-allowed whitespace-nowrap">
                               No Notes
                             </span>
                           )}
