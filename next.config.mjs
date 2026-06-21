@@ -23,9 +23,6 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    serverComponentsExternalPackages: ['pdf-parse'],
-  },
 };
 
 export default withPWA(nextConfig);

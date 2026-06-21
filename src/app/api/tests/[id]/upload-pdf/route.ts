@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import * as pdf from "pdf-parse";
+import { extractTextItems, getDocumentProxy } from "unpdf";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function POST(
@@ -15,13 +15,24 @@ export async function POST(
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
 
     let parsedText = "";
     try {
-      const parser = new pdf.PDFParse({ data: buffer });
-      const textResult = await parser.getText();
-      parsedText = textResult.text || "";
+      const pdfData = await getDocumentProxy(new Uint8Array(arrayBuffer));
+      const { items } = await extractTextItems(pdfData);
+      const pagesText = items.map(pageItems => {
+        let pageText = "";
+        for (const item of pageItems) {
+          pageText += item.str;
+          if (item.hasEOL) {
+            pageText += "\n";
+          } else {
+            pageText += " ";
+          }
+        }
+        return pageText;
+      });
+      parsedText = pagesText.join("\n");
     } catch (pdfError) {
       console.error("PDF Parsing Error, using empty text:", pdfError);
       parsedText = "Fallback text due to PDF parsing error.";
