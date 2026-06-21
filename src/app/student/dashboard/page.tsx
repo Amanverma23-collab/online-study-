@@ -150,9 +150,9 @@ function StudentDashboardContent() {
     });
 
   return (
-    <main className="flex-1 p-6 md:p-8 pt-14 md:pt-0 overflow-y-auto h-full flex flex-col no-scrollbar bg-[#F5F3EC]">
+    <main className="flex-1 p-6 md:p-8 pt-14 md:pt-0 overflow-hidden h-full flex flex-col bg-[#F5F3EC]">
       {/* Header */}
-      <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-6 md:-mx-8 px-6 md:px-8 pt-3 md:pt-6 mt-0 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-3 border-b border-[#DDD8CC] pb-4 md:pb-6">
+      <div className="flex-shrink-0 bg-[#F5F3EC] -mx-6 md:-mx-8 px-6 md:px-8 pt-3 md:pt-6 mt-0 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-3 border-b border-[#DDD8CC] pb-4 md:pb-6">
         <div>
           <h1 className="page-title text-[#0D0F12] uppercase font-bold !text-[6.6vw] sm:!text-xl md:!text-2xl !tracking-tight sm:!tracking-normal whitespace-nowrap">
             {activeTab === "series" ? "Paid Test Series Pack" : "Briefing Dashboard"}
@@ -165,11 +165,12 @@ function StudentDashboardContent() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C9A84C]"></div>
-        </div>
-      ) : activeTab === "series" ? (
+      <div className="flex-1 overflow-y-auto md:overflow-hidden no-scrollbar pb-8 -mx-6 md:-mx-8 px-6 md:px-8">
+        {loading ? (
+          <div className="h-64 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C9A84C]"></div>
+          </div>
+        ) : activeTab === "series" ? (
         /* PAID TEST SERIES TAB VIEW */
         <div className="space-y-8 pb-8">
           {/* Enrolled Paid Test Series */}
@@ -354,6 +355,7 @@ function StudentDashboardContent() {
           </div>
         </div>
       )}
+      </div>
     </main>
   );
 }
