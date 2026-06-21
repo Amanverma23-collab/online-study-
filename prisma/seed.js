@@ -19,7 +19,31 @@ async function main() {
     });
     console.log("Admin seeded successfully:", admin.email);
   } else {
-    console.log("Admin already exists.");
+    console.log("Admin admin@officerssaga.com already exists.");
+  }
+
+  // Seed user requested admin
+  const gmailAdmin = await prisma.admin.findUnique({
+    where: { email: 'admin@gmail.com' }
+  });
+
+  if (!gmailAdmin) {
+    const passwordHash = await bcrypt.hash('admin123', 10);
+    const admin = await prisma.admin.create({
+      data: {
+        email: 'admin@gmail.com',
+        password: passwordHash,
+        name: 'Teacher Admin'
+      }
+    });
+    console.log("Teacher admin seeded successfully:", admin.email);
+  } else {
+    const passwordHash = await bcrypt.hash('admin123', 10);
+    await prisma.admin.update({
+      where: { email: 'admin@gmail.com' },
+      data: { password: passwordHash }
+    });
+    console.log("Teacher admin password updated successfully.");
   }
 }
 
