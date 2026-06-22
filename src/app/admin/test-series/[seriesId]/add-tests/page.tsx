@@ -524,10 +524,20 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
             {/* Steps Indicator */}
             <div className="flex items-center justify-between bg-white px-6 py-4 rounded-[6px] border border-[#DDD8CC] shadow-sm mb-6">
               {[
-                { num: 1, name: "Test Details" },
-                { num: 2, name: "Add Sections Hub" },
-                { num: 3, name: "Configure Section" },
-                { num: 4, name: "Publish" }
+                { num: 1, name: "Test Details", node: <span>Test Details</span> },
+                { num: 2, name: "Add Sections Hub", node: (
+                  <span className="inline-flex flex-col sm:flex-row leading-tight sm:leading-normal">
+                    <span className="block sm:inline">Add Section</span>
+                    <span className="block sm:inline sm:ml-1">Hub</span>
+                  </span>
+                ) },
+                { num: 3, name: "Configure Section", node: (
+                  <span className="inline-flex flex-col sm:flex-row leading-tight sm:leading-normal">
+                    <span className="block sm:inline">Configure</span>
+                    <span className="block sm:inline sm:ml-1">Section</span>
+                  </span>
+                ) },
+                { num: 4, name: "Publish", node: <span>Publish</span> }
               ].map((s) => (
                 <div key={s.num} className="flex items-center gap-2">
                   <span
@@ -542,11 +552,11 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                     {wizardStep > s.num ? "✓" : s.num}
                   </span>
                   <span
-                    className={`font-display text-xs uppercase tracking-wider font-bold whitespace-nowrap ${
-                      wizardStep === s.num ? "text-[#0D0F12] inline" : "text-gray-400 hidden sm:inline"
+                    className={`font-display text-xs uppercase tracking-wider font-bold sm:whitespace-nowrap ${
+                      wizardStep === s.num ? "text-[#0D0F12] inline-flex" : "text-gray-400 hidden sm:inline-flex"
                     }`}
                   >
-                    {s.name}
+                    {s.node}
                   </span>
                   {s.num < 4 && <span className="text-gray-300 mx-2 sm:mx-4 md:mx-6 font-light">/</span>}
                 </div>
