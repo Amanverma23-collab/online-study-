@@ -606,21 +606,30 @@ export default function CreateTestPage() {
           {/* STEP 3: Configure and Build Section */}
           {step === 3 && (
             <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-[#DDD8CC]/70 pb-4 mb-6">
-                <div>
-                  <h2 className="section-title text-[#0D0F12] uppercase font-bold whitespace-nowrap text-base sm:text-xl md:text-2xl">
-                    Step 3: Configure Section — {activeSubject}
+              <div className="border-b border-[#DDD8CC]/70 pb-4 mb-6">
+                {/* Row 1: Step Title */}
+                <h4 className="text-[10px] sm:text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A]">
+                  Step 3: Configure Section
+                </h4>
+                
+                {/* Row 2: Subject Title & Cancel Button */}
+                <div className="flex justify-between items-center mt-1.5 gap-4">
+                  <h2 className="font-display font-black text-xl sm:text-2xl text-[#0D0F12] uppercase tracking-wide">
+                    {activeSubject}
                   </h2>
-                  <p className="text-xs text-[#8B9E6A] font-body mt-1">
-                    Set limits, upload file, and verify correct answers list
-                  </p>
+                  <button
+                    onClick={() => setStep(2)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] sm:text-xs font-bold uppercase text-gray-500 hover:text-[#0D0F12] bg-[#F5F3EC]/50 hover:bg-[#F5F3EC] rounded-lg border border-[#DDD8CC]/40 transition duration-150 active:scale-95 flex-shrink-0"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" /> Cancel Section
+                  </button>
                 </div>
-                <button
-                  onClick={() => setStep(2)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase text-gray-500 hover:text-[#0D0F12] bg-[#F5F3EC]/50 hover:bg-[#F5F3EC] rounded-lg border border-[#DDD8CC]/40 transition duration-150 active:scale-95 self-start sm:self-auto"
-                >
-                  <ArrowLeft className="w-4 h-4" /> Cancel Section
-                </button>
+                
+                {/* Row 3 & 4: Subtitle split descriptions */}
+                <p className="text-[11px] sm:text-xs text-[#8B9E6A] font-body mt-2 leading-relaxed">
+                  <span className="block">Set limits, upload file,</span>
+                  <span className="block mt-0.5">and verify correct answers list</span>
+                </p>
               </div>
 
               {/* Top Configuration inputs */}
