@@ -58,7 +58,7 @@ export function AdminSidebar() {
   return (
     <>
       {/* Mobile Top Navbar */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0D0F12] text-[#EEF0E8] border-b border-[#2E3B1E] flex items-center justify-between px-4 z-45">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0D0F12] text-[#EEF0E8] border-b border-[#2E3B1E] flex items-center justify-between px-4 z-40">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsOpen(true)}
