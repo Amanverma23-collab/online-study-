@@ -4,11 +4,11 @@ importScripts("https://www.gstatic.com/firebasejs/10.0.0/firebase-messaging-comp
 // These values must be replaced by the developer manually since Service Workers
 // cannot access process.env at runtime outside of the Next.js compilation context.
 firebase.initializeApp({
-  apiKey: "PASTE_API_KEY_HERE",
-  authDomain: "PASTE_AUTH_DOMAIN_HERE",
-  projectId: "PASTE_PROJECT_ID_HERE",
-  messagingSenderId: "PASTE_SENDER_ID_HERE",
-  appId: "PASTE_APP_ID_HERE"
+  apiKey: "AIzaSyDqSCMikeCTmerpiDEIW5gVuhSSuhAlyj0",
+  authDomain: "officers-saga.firebaseapp.com",
+  projectId: "officers-saga",
+  messagingSenderId: "265213425893",
+  appId: "1:265213425893:web:e922375dd22bfbf7c13c0c"
 });
 
 const messaging = firebase.messaging();
