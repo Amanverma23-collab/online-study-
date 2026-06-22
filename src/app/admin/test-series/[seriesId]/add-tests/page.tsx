@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus, CheckCircle, FileText, Globe, Upload, AlertTriangle, ArrowRight, ShieldCheck, Clock, Check, Edit } from "lucide-react";
+import QuestionText from "@/components/question-text";
 
 interface Question {
   id: string;
@@ -1055,7 +1056,7 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                                       <span className="bg-[#C9A84C] text-[#0D0F12] px-2 py-0.5 rounded-sm text-xs font-mono font-bold mt-0.5">
                                         {q.order}
                                       </span>
-                                      <span className="leading-relaxed">{q.questionText}</span>
+                                      <span className="leading-relaxed"><QuestionText text={q.questionText} /></span>
                                     </h3>
                                     <button
                                       onClick={() => handleEditQuestion(index)}

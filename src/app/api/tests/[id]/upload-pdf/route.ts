@@ -38,7 +38,7 @@ export async function POST(
       parsedText = "Fallback text due to PDF parsing error.";
     }
 
-    let questions = [];
+    let questions: any[] = [];
     let jsonText = "";
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -47,33 +47,97 @@ export async function POST(
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
           model: "gemini-flash-latest",
-          generationConfig: { responseMimeType: "application/json" }
+          generationConfig: {
+            responseMimeType: "application/json",
+            maxOutputTokens: 16384,
+          },
         });
 
-        const prompt = `You are an MCQ extractor for Indian competitive exams (NDA/CDS). 
-Extract all multiple choice questions, their correct answers, and explanations (if any) from the text provided by the user.
-Look carefully at the text for any indicating marks, answer keys, bold text, or explicit answer lists to determine the correctOption.
-Return ONLY a valid JSON array of objects. Do not include markdown codeblocks or backticks.
-Each object must represent a question and have the following exact schema:
+        const EXTRACTION_PROMPT = `You are an expert at extracting MCQ questions from CDS/NDA English exam papers.
+The PDF may contain multiple sections with different question types. Extract ALL questions from the entire document,
+regardless of section or question type.
+
+For EVERY question found (numbered Q1 through Q50 or however many exist), extract:
+- questionText: The COMPLETE question text exactly as it appears, preserving all line breaks between statements
+  by using "\\n" to represent each new line. For example, Statement I on its own line, Statement II on next line, etc.
+  Keep ALL-CAPS words exactly as they are (do not change case).
+  For Sentence Improvement questions: include the full sentence with the underlined/key part marked with **double asterisks**
+  like this: "The CEO **has been appointed** two years ago..."
+  For Correlating Sentences: include both S1 and S2 in the questionText separated by \\n
+  For Comprehension: include the question only (NOT the passage — the passage will be handled separately)
+- optionA, optionB, optionC, optionD: The text of each option. Remove the option letter prefix (a), (b), (c), (d)
+  — just include the text
+- correctOption: Leave this as "" (empty string) — the teacher will mark correct answers manually
+- explanation: "" (empty string)
+
+If a question has fewer than 4 options, fill remaining with "N/A".
+
+Return ONLY a valid JSON array. No explanation, no markdown, no backticks:
 [
   {
-    "order": <number representing 1-based index of question>,
-    "questionText": "<full question text>",
-    "optionA": "<option A text>",
-    "optionB": "<option B text>",
-    "optionC": "<option C text>",
-    "optionD": "<option D text>",
-    "correctOption": "<correct option letter, must be A, B, C, or D. If the correct option is not found in the text, leave as empty string \"\">",
-    "explanation": "<detailed explanation of the answer if available in the text; otherwise empty string \"\">"
+    "order": 1,
+    "questionText": "Consider the following statements...\\nStatement I: ...\\nStatement II: ...\\nStatement III: ...\\nWhich of the statements given above is/are correct?",
+    "optionA": "I and II only",
+    "optionB": "II and III only",
+    "optionC": "I and III only",
+    "optionD": "I, II, and III",
+    "correctOption": "",
+    "explanation": ""
   }
 ]
 
-Text:
-${parsedText.slice(0, 12000)}`;
+IMPORTANT:
+- Extract ALL questions from ALL sections/parts of the document
+- Do NOT skip any questions
+- If the PDF is long, process it completely — do not stop early
+- Preserve ALL-CAPS words as uppercase`;
 
-        const result = await model.generateContent(prompt);
-        jsonText = result.response.text();
-        questions = JSON.parse(jsonText);
+        const CHUNK_THRESHOLD = 14000;
+
+        const extractChunk = async (
+          chunkText: string,
+          startFrom: number
+        ): Promise<any[]> => {
+          const prompt = `${EXTRACTION_PROMPT}\n\nNote: Questions in this chunk start from approximately Q${startFrom}.\n\nText:\n${chunkText}`;
+          const result = await model.generateContent(prompt);
+          const text = result.response.text();
+          return JSON.parse(text);
+        };
+
+        if (parsedText.length > CHUNK_THRESHOLD) {
+          const splitPoints = [
+            parsedText.indexOf("PART III"),
+            parsedText.indexOf("\n26."),
+            parsedText.indexOf("\nQ26"),
+            parsedText.indexOf("PART IV"),
+            parsedText.indexOf("\n31."),
+            parsedText.indexOf("\nQ31"),
+          ];
+          const validSplits = splitPoints.filter(
+            (i) => i > CHUNK_THRESHOLD / 2
+          );
+          const midpoint =
+            validSplits.length > 0
+              ? validSplits[0]
+              : Math.floor(parsedText.length / 2);
+
+          const chunk1 = parsedText.slice(0, midpoint);
+          const chunk2 = parsedText.slice(midpoint);
+
+          const midQGuess = (() => {
+            const m = chunk1.match(/(\d+)\.\s/);
+            return m ? parseInt(m[1]) + 5 : 25;
+          })();
+
+          const [results1, results2] = await Promise.all([
+            extractChunk(chunk1, 1),
+            extractChunk(chunk2, midQGuess),
+          ]);
+
+          questions = [...results1, ...results2];
+        } else {
+          questions = await extractChunk(parsedText, 1);
+        }
       } catch (geminiError: any) {
         console.error("Gemini Extractor Error:", geminiError);
 

@@ -68,7 +68,7 @@ model Question {
   id            String      @id @default(cuid())
   sectionId     String
   section       TestSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  questionText  String      
+  questionText  String      @db.Text
   optionA       String
   optionB       String
   optionC       String
@@ -170,7 +170,7 @@ model SeriesQuestion {
   id            String            @id @default(cuid())
   sectionId     String
   section       SeriesTestSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  questionText  String            
+  questionText  String            @db.Text
   optionA       String
   optionB       String
   optionC       String

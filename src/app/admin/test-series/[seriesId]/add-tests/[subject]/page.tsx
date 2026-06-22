@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useRouter } from "next/navigation";
 import { Upload, CheckCircle, AlertTriangle, FileText, ArrowLeft, ArrowRight, ShieldCheck, Check, Edit } from "lucide-react";
+import QuestionText from "@/components/question-text";
 
 interface ExtractedQuestion {
   order: number;
@@ -621,7 +622,7 @@ export default function AddSubjectTestPage({ params }: { params: { seriesId: str
                           <div className="flex items-start justify-between gap-3">
                             <h3 className="font-display font-bold text-[#EEF0E8] text-md mb-4 flex items-start gap-2.5 flex-1">
                               <span className="bg-[#C9A84C] text-[#0D0F12] px-2 py-0.5 rounded-sm text-xs mt-0.5 font-bold font-mono">{q.order}</span>
-                              <span className="text-[#EEF0E8] leading-relaxed">{q.questionText}</span>
+                              <span className="text-[#EEF0E8] leading-relaxed"><QuestionText text={q.questionText} /></span>
                             </h3>
                             <button
                               onClick={() => handleEditQuestion(index)}

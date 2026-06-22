@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { User, Info, BookOpen, ChevronLeft, ChevronRight, Check, X, Clock, AlertCircle } from "lucide-react";
+import QuestionText from "@/components/question-text";
 
 const formatSubject = (sub: string) => {
   if (!sub) return "";
@@ -570,7 +571,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
               <div className="bg-[#1C2415] p-4 sm:p-6 rounded border border-[#2E3B1E] shadow-sm mb-4 sm:mb-6">
                 <h2 className="flex gap-2">
                   <span className="font-display font-bold text-md text-[#C9A84C] mt-0.5 whitespace-nowrap flex-shrink-0">Q {currentIndex + 1}.</span>
-                  <span className="question-text text-[#EEF0E8]">{currentQuestion.questionText}</span>
+                  <span className="question-text text-[#EEF0E8]"><QuestionText text={currentQuestion.questionText} /></span>
                 </h2>
               </div>
 
@@ -887,7 +888,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
         <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
           <div className="bg-[#1C2415] p-4 rounded border border-[#2E3B1E]">
             <p className="question-text text-[#EEF0E8] text-sm leading-relaxed whitespace-pre-wrap">
-              {currentQuestion.questionText}
+              <QuestionText text={currentQuestion.questionText} />
             </p>
           </div>
 

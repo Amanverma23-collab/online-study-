@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trophy, Star, Award, CheckCircle2, Percent, Users2, ChevronUp, ChevronDown, Check, X, ShieldAlert, ArrowLeft, User, BookOpen, Clock, MapPin, List, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import QuestionText from "@/components/question-text";
 
 const formatSubject = (sub: string) => {
   if (!sub) return "";
@@ -531,7 +532,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                         <div>
                           <h3 className="font-display font-bold text-md text-[#0D0F12] flex items-start gap-2.5 leading-relaxed">
                             <span className="bg-[#0D0F12] text-[#EEF0E8] px-2 py-0.5 rounded-sm text-xs mt-1 font-mono font-bold">{q.order}</span>
-                            <span className="question-text text-[#0D0F12] leading-relaxed">{q.questionText}</span>
+                            <span className="question-text text-[#0D0F12] leading-relaxed"><QuestionText text={q.questionText} /></span>
                           </h3>
                           <span className="text-[10px] bg-gray-100 text-gray-400 font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded mt-2 inline-block">
                             Section: {formatSubject(q.subject)}
@@ -861,7 +862,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                         </div>
                         
                         <p className="text-xs text-gray-700 leading-relaxed truncate font-medium font-body">
-                          {q.questionText}
+                          <QuestionText text={q.questionText} />
                         </p>
                         
                         <div className="flex items-center justify-between border-t border-gray-50 pt-2 text-[10px] font-display font-bold text-[#C9A84C] uppercase tracking-wider">
@@ -1109,7 +1110,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
               {/* Question Text */}
               <div className="bg-gray-50 border border-gray-100 rounded p-4 mb-4">
                 <p className="text-xs font-semibold text-gray-700 leading-relaxed whitespace-pre-wrap font-body">
-                  {activeQuestion.questionText}
+                  <QuestionText text={activeQuestion.questionText} />
                 </p>
               </div>
 

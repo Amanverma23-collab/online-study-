@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { FileDown, Clock, ArrowLeft, Check, X, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import QuestionText from "@/components/question-text";
 
 interface SubjectBreakdown {
   subject: string;
@@ -326,7 +327,7 @@ export default function TestResultsPage({ params }: { params: { testId: string }
                         <div className="flex justify-between items-start gap-4 mb-3">
                           <h4 className="font-display font-bold text-[#EEF0E8] flex items-start gap-2.5 text-sm md:text-base">
                             <span className="bg-[#2E3B1E] text-[#C9A84C] border border-[#2E3B1E] px-2 py-0.5 rounded text-xs mt-0.5 font-bold font-mono">{q.order}</span>
-                            <span className="question-text text-[#EEF0E8] leading-relaxed">{q.questionText}</span>
+                            <span className="question-text text-[#EEF0E8] leading-relaxed"><QuestionText text={q.questionText} /></span>
                           </h4>
                           {!isUnanswered && (
                             <span className={`inline-flex items-center gap-1 text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded ${

@@ -6,6 +6,7 @@ import { BatchSelect } from "@/components/batch-select";
 import { getActiveBatch } from "@/lib/batch";
 import { useRouter } from "next/navigation";
 import { Upload, AlertTriangle, FileText, ArrowRight, ArrowLeft, ShieldCheck, Check, Clock, Edit } from "lucide-react";
+import QuestionText from "@/components/question-text";
 
 interface ExtractedQuestion {
   order: number;
@@ -890,7 +891,7 @@ export default function CreateTestPage() {
                                   <span className="bg-[#C9A84C] text-[#0D0F12] px-2 py-0.5 rounded-sm text-xs font-mono font-bold mt-0.5">
                                     {q.order}
                                   </span>
-                                  <span className="leading-relaxed">{q.questionText}</span>
+                                  <span className="leading-relaxed"><QuestionText text={q.questionText} /></span>
                                 </h3>
                                 <button
                                   onClick={() => handleEditQuestion(index)}
