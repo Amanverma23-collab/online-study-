@@ -110,7 +110,7 @@ export async function POST(
       const ans = answersFromDb.find(a => a.questionId === q.id);
       if (!ans || !ans.selected) {
         unattempted++;
-      } else if (ans.selected === q.correctOption) {
+      } else if (ans.selected.trim().toUpperCase() === q.correctOption.trim().toUpperCase()) {
         score += currentSection.marksPerQ;
         correct++;
       } else {

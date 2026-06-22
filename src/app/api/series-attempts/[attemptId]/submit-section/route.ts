@@ -119,7 +119,7 @@ export async function POST(
       const ans = answersFromDb.find(a => a.questionId === q.id);
       if (!ans || !ans.selected) {
         unattempted++;
-      } else if (ans.selected === q.correctOption) {
+      } else if (ans.selected.trim().toUpperCase() === q.correctOption.trim().toUpperCase()) {
         score += currentSection.marksPerQ;
         correct++;
       } else {
@@ -199,7 +199,7 @@ export async function POST(
               (other.score === att.score && other.timeSpent < att.timeSpent)
           ).length + 1;
 
-          const percentile = totalMarks > 0 ? (att.score / totalMarks) * 100 : 0;
+          const percentile = totalTakers > 1 ? ((totalTakers - rank) / totalTakers) * 100 : 100;
 
           await db.seriesAttempt.update({
             where: { id: att.id },
