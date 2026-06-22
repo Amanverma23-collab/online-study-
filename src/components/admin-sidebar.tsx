@@ -107,7 +107,7 @@ export function AdminSidebar() {
         } md:translate-x-0 md:static md:w-[220px] md:flex-shrink-0 md:flex`}
       >
         {/* Brand Header */}
-        <div className="p-6 border-b border-[#2E3B1E] flex items-center justify-between gap-2.5 relative">
+        <div className="p-6 border-b border-[#2E3B1E] flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-[#C9A84C] rounded flex items-center justify-center text-[#0D0F12] shadow">
               <Star className="w-5 h-5 fill-current" />
@@ -117,19 +117,14 @@ export function AdminSidebar() {
               <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest">Breifing Room</span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="hidden md:block">
-              <NotificationBell userType="admin" />
-            </div>
-            {/* Close button for mobile */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className="md:hidden p-1 text-[#8B9E6A] hover:text-[#EEF0E8] transition"
-              aria-label="Close Sidebar"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          {/* Close button for mobile */}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="md:hidden p-1 text-[#8B9E6A] hover:text-[#EEF0E8] transition"
+            aria-label="Close Sidebar"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Active Batch switcher — drives default pre-fill on creation forms */}

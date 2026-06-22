@@ -16,6 +16,7 @@ import {
   Video,
 } from "lucide-react";
 import Link from "next/link";
+import { NotificationBell } from "@/components/notification-bell";
 
 interface LiveClass {
   id: string;
@@ -201,7 +202,7 @@ export default function StudentClassesPage() {
   return (
     <main className="flex-1 p-6 md:p-8 pt-14 md:pt-0 overflow-hidden h-full flex flex-col bg-[#F5F3EC]">
       {/* Header */}
-      <div className="flex-shrink-0 bg-[#F5F3EC] -mx-6 md:-mx-8 px-6 md:px-8 pt-3 md:pt-6 mt-0 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
+      <div className="flex-shrink-0 bg-[#F5F3EC] -mx-6 md:-mx-8 px-6 md:px-8 pt-3 md:pt-6 mt-0 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6 relative">
         <div>
           <h1 className="page-title text-[#0D0F12] uppercase font-bold !text-[7.6vw] sm:!text-xl md:!text-2xl !tracking-tight sm:!tracking-normal whitespace-nowrap">
             <span className="sm:hidden">Live and Recorded Class</span>
@@ -212,6 +213,11 @@ export default function StudentClassesPage() {
             <span className="hidden sm:inline">Attend live Zoom sessions & view unlisted class archives</span>
           </p>
         </div>
+        {studentId && (
+          <div className="hidden md:block">
+            <NotificationBell userType="student" userId={studentId} />
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar pb-8 -mx-6 md:-mx-8 px-6 md:px-8">

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { FileText, Radio, Users, CheckCircle, ArrowRight, Play, Square, Trophy, Plus, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import { NotificationBell } from "@/components/notification-bell";
 import { useActiveBatch } from "@/contexts/ActiveBatchContext";
 
 interface Stats {
@@ -136,14 +137,19 @@ export default function AdminDashboard() {
       <AdminSidebar />
       <main className="flex-1 p-8 overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-8 px-8 pt-0 md:pt-4 mt-0 md:-mt-8 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6">
+        <div className="sticky top-14 md:top-0 z-30 bg-[#F5F3EC] -mx-8 px-8 pt-0 md:pt-4 mt-0 md:-mt-8 flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 border-b border-[#DDD8CC] pb-6 relative">
           <div>
             <h1 className="page-title text-[#0D0F12]">Briefing Overview</h1>
             <p className="text-sm text-[#8B9E6A] font-body mt-1">Manage military test templates, live schedules, and results sheet exports</p>
           </div>
-          <Link href="/admin/create-test" className="btn-primary max-w-max">
-            <Plus className="w-4 h-4" /> Create test setup
-          </Link>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:block">
+              <NotificationBell userType="admin" />
+            </div>
+            <Link href="/admin/create-test" className="btn-primary max-w-max">
+              <Plus className="w-4 h-4" /> Create test setup
+            </Link>
+          </div>
         </div>
 
         {/* MSG91 Wallet Balance Warning Banner */}
