@@ -122,7 +122,7 @@ export function NotificationBell({ userType, userId }: NotificationBellProps) {
   }
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="md:relative" ref={dropdownRef}>
       {/* Bell Icon Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -139,7 +139,7 @@ export function NotificationBell({ userType, userId }: NotificationBellProps) {
 
       {/* Floating Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-[#0D0F12] border border-[#2E3B1E] rounded shadow-2xl overflow-hidden z-50 text-[#EEF0E8] font-display">
+        <div className="absolute right-4 md:right-0 top-14 md:top-auto md:mt-2 w-[calc(100vw-32px)] sm:w-80 bg-[#0D0F12] border border-[#2E3B1E] rounded shadow-2xl overflow-hidden z-50 text-[#EEF0E8] font-display">
           {/* Header */}
           <div className="p-3 border-b border-[#2E3B1E] flex justify-between items-center bg-[#1C2415]">
             <span className="font-bold text-xs uppercase tracking-wider text-[#EEF0E8] flex items-center gap-1.5">
