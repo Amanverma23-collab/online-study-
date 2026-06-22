@@ -242,13 +242,13 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                 <span className="font-display font-bold text-[22px] text-[#0D0F12] mt-1">{data.you.accuracy}%</span>
               </div>
 
-              {/* Percentile */}
+              {/* Percentage */}
               <div className="flex flex-col items-center col-span-2 md:col-span-1">
                 <div className="w-[64px] h-[64px] rounded-full bg-[#6B4E8A] text-white flex items-center justify-center mb-3 shadow">
-                  <Users2 className="w-6 h-6" />
+                  <Percent className="w-6 h-6" />
                 </div>
-                <span className="text-[12px] font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Percentile</span>
-                <span className="font-display font-bold text-[22px] text-[#0D0F12] mt-1">{data.you.percentile.toFixed(1)}%</span>
+                <span className="text-[12px] font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Percentage</span>
+                <span className="font-display font-bold text-[22px] text-[#0D0F12] mt-1">{data.totalMarks > 0 ? ((data.you.score / data.totalMarks) * 100).toFixed(1) : 0}%</span>
               </div>
             </div>
 
@@ -721,16 +721,16 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                 </div>
               </div>
 
-              {/* Percentile Card */}
+              {/* Percentage Card */}
               <div className="bg-white p-4 rounded border border-[#DDD8CC] shadow-sm flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-[#6B4E8A]/10 border border-[#6B4E8A]/20 text-[#6B4E8A] flex items-center justify-center shadow-sm flex-shrink-0">
-                    <Users2 className="w-5 h-5" />
+                    <Percent className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A] leading-none">Percentile</h3>
+                    <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A] leading-none">Percentage</h3>
                     <p className="font-display font-bold text-lg text-[#0D0F12] mt-1 leading-none font-mono">
-                      {data.you.percentile.toFixed(1)}%
+                      {data.totalMarks > 0 ? ((data.you.score / data.totalMarks) * 100).toFixed(1) : 0}%
                     </p>
                   </div>
                 </div>
