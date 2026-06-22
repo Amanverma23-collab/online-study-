@@ -159,36 +159,36 @@ export default function TestResultsPage({ params }: { params: { testId: string }
         </div>
 
         {/* Overview Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-[6px] border border-[#DDD8CC] shadow-sm flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-[#2C6E8A] text-[#EEF0E8] flex items-center justify-center shadow">
-              <Users className="w-6 h-6" />
+        <div className="grid grid-cols-3 gap-3 md:gap-6 mb-8">
+          <div className="bg-white p-3 md:p-6 rounded-[6px] border border-[#DDD8CC] shadow-sm flex items-center gap-2 md:gap-4">
+            <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-[#2C6E8A] text-[#EEF0E8] flex items-center justify-center shadow flex-shrink-0">
+              <Users className="w-4 h-4 md:w-6 md:h-6" />
             </div>
-            <div>
-              <p className="text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Total Takers</p>
-              <h3 className="font-display font-bold text-2xl text-[#0D0F12] mt-1">{totalAttempted} Candidates</h3>
+            <div className="min-w-0">
+              <p className="text-[8px] md:text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Total Takers</p>
+              <h3 className="font-display font-bold text-sm md:text-2xl text-[#0D0F12] mt-0.5 md:mt-1 truncate">{totalAttempted} Candidates</h3>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-[6px] border border-[#DDD8CC] shadow-sm flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-[#C9A84C] text-[#0D0F12] flex items-center justify-center shadow">
-              <Star className="w-6 h-6 fill-current" />
+          <div className="bg-white p-3 md:p-6 rounded-[6px] border border-[#DDD8CC] shadow-sm flex items-center gap-2 md:gap-4">
+            <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-[#C9A84C] text-[#0D0F12] flex items-center justify-center shadow flex-shrink-0">
+              <Star className="w-4 h-4 md:w-6 md:h-6 fill-current" />
             </div>
-            <div>
-              <p className="text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Average Score</p>
-              <h3 className="font-display font-bold text-2xl text-[#0D0F12] mt-1 font-mono">
-                {avgScore.toFixed(2)} <span className="text-xs font-medium text-gray-400">/ {data.totalMarks.toFixed(0)}</span>
+            <div className="min-w-0">
+              <p className="text-[8px] md:text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Avg Score</p>
+              <h3 className="font-display font-bold text-sm md:text-2xl text-[#0D0F12] mt-0.5 md:mt-1 font-mono truncate">
+                {avgScore.toFixed(2)} <span className="text-[8px] md:text-xs font-medium text-gray-400">/ {data.totalMarks.toFixed(0)}</span>
               </h3>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-[6px] border border-[#DDD8CC] shadow-sm flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-[#8B4A6E] text-[#EEF0E8] flex items-center justify-center shadow">
-              <Award className="w-6 h-6" />
+          <div className="bg-white p-3 md:p-6 rounded-[6px] border border-[#DDD8CC] shadow-sm flex items-center gap-2 md:gap-4">
+            <div className="w-9 h-9 md:w-14 md:h-14 rounded-full bg-[#8B4A6E] text-[#EEF0E8] flex items-center justify-center shadow flex-shrink-0">
+              <Award className="w-4 h-4 md:w-6 md:h-6" />
             </div>
-            <div>
-              <p className="text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Top Score</p>
-              <h3 className="font-display font-bold text-2xl text-[#0D0F12] mt-1 font-mono">
+            <div className="min-w-0">
+              <p className="text-[8px] md:text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A]">Top Score</p>
+              <h3 className="font-display font-bold text-sm md:text-2xl text-[#0D0F12] mt-0.5 md:mt-1 font-mono truncate">
                 {data.results[0] ? `${data.results[0].score.toFixed(2)}` : "N/A"}
               </h3>
             </div>
