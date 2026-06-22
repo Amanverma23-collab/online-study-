@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
-import { FileText, Radio, Users, CheckCircle, ArrowRight, Play, Square, Trophy, Plus, ShieldAlert } from "lucide-react";
+import { FileText, Radio, Users, CheckCircle, ArrowRight, Play, Square, Trophy, Plus, ShieldAlert, Megaphone } from "lucide-react";
 import Link from "next/link";
 import { NotificationBell } from "@/components/notification-bell";
 import { useActiveBatch } from "@/contexts/ActiveBatchContext";
+import { BATCH_OPTIONS } from "@/lib/batch";
 
 interface Stats {
   totalTests: number;
@@ -43,6 +44,45 @@ export default function AdminDashboard() {
   });
   const [recentTests, setRecentTests] = useState<Test[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [announcementTitle, setAnnouncementTitle] = useState("");
+  const [announcementMessage, setAnnouncementMessage] = useState("");
+  const [announcementBatch, setAnnouncementBatch] = useState("");
+  const [announcementLoading, setAnnouncementLoading] = useState(false);
+  const [announcementError, setAnnouncementError] = useState("");
+  const [announcementSuccess, setAnnouncementSuccess] = useState(false);
+
+  const handleAnnouncementSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAnnouncementError("");
+    setAnnouncementLoading(true);
+    try {
+      const res = await fetch("/api/admin/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: announcementTitle,
+          message: announcementMessage,
+          batch: announcementBatch || null,
+          link: "/student/dashboard"
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setAnnouncementSuccess(true);
+        setAnnouncementTitle("");
+        setAnnouncementMessage("");
+        setAnnouncementBatch("");
+        setTimeout(() => setAnnouncementSuccess(false), 3000);
+      } else {
+        setAnnouncementError(data.error || "Failed to publish announcement.");
+      }
+    } catch (err) {
+      setAnnouncementError("Server connection issue. Please try again.");
+    } finally {
+      setAnnouncementLoading(false);
+    }
+  };
 
   const visibleTests = activeBatch
     ? recentTests.filter((test) =>
@@ -200,100 +240,181 @@ export default function AdminDashboard() {
               })}
             </div>
 
-            {/* Recent Tests Section */}
-            <div className="bg-white rounded-[6px] border border-[#DDD8CC] shadow-sm">
-              <div className="p-6 border-b border-[#DDD8CC] flex justify-between items-center bg-gray-50/50 rounded-t-[6px]">
-                <h2 className="font-display font-bold text-lg uppercase tracking-wider text-[#0D0F12]">Recent Mock Exams</h2>
-                <Link
-                  href="/admin/tests"
-                  className="text-sm font-display font-bold uppercase tracking-wider text-[#C9A84C] hover:text-[#F0D080] transition flex items-center gap-1"
-                >
-                  All exam sheets <ArrowRight className="w-4 h-4" />
-                </Link>
+            {/* Grid for Recent Tests & Quick Announcement Broadcast */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+              {/* Left Column: Recent Tests (takes 2 cols) */}
+              <div className="lg:col-span-2 bg-white rounded-[6px] border border-[#DDD8CC] shadow-sm flex flex-col justify-between">
+                <div className="p-6 border-b border-[#DDD8CC] flex justify-between items-center bg-gray-50/50 rounded-t-[6px]">
+                  <h2 className="font-display font-bold text-lg uppercase tracking-wider text-[#0D0F12]">Recent Mock Exams</h2>
+                  <Link
+                    href="/admin/tests"
+                    className="text-sm font-display font-bold uppercase tracking-wider text-[#C9A84C] hover:text-[#F0D080] transition flex items-center gap-1"
+                  >
+                    All exam sheets <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+
+                {visibleTests.length === 0 ? (
+                  <div className="p-12 text-center text-gray-400 flex-1 flex flex-col justify-center">
+                    <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p className="font-display font-semibold uppercase tracking-wider text-sm">No exam templates found</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse font-body">
+                      <thead>
+                        <tr className="bg-gray-50 border-b border-[#DDD8CC] text-[#8B9E6A] font-display font-bold text-xs uppercase tracking-wider">
+                          <th className="px-6 py-4">Test Title</th>
+                          <th className="px-6 py-4">Subject</th>
+                          <th className="px-6 py-4 text-center">Batch</th>
+                          <th className="px-6 py-4 text-center">Questions</th>
+                          <th className="px-6 py-4 text-center">Duration</th>
+                          <th className="px-6 py-4 text-center">Status</th>
+                          <th className="px-6 py-4 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#DDD8CC] text-sm font-semibold">
+                        {visibleTests.map((test) => (
+                          <tr key={test.id} className="hover:bg-gray-50/50 transition duration-100">
+                            <td className="px-6 py-4 font-bold text-[#0D0F12]">{test.title}</td>
+                            <td className="px-6 py-4">
+                              <span className="bg-gray-100 border border-gray-200 text-[#0D0F12] px-2.5 py-1 rounded text-xs uppercase font-display font-bold tracking-wider">
+                                {test.subject}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <div className="flex flex-wrap justify-center gap-1">
+                                {(test.batch ? test.batch.split(",") : ["NDA"]).map((b) => (
+                                  <span key={b} className="bg-[#C9A84C]/10 border border-[#C9A84C]/25 text-[#C9A84C] text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">
+                                    {b}
+                                  </span>
+                                ))}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center font-display font-bold text-md">{test._count.questions}</td>
+                            <td className="px-6 py-4 text-center text-gray-500 font-mono">{test.duration} mins</td>
+                            <td className="px-6 py-4 text-center">
+                              {test.isLive ? (
+                                <span className="inline-flex items-center gap-1 bg-[#4A7C59]/10 text-[#4A7C59] border border-[#4A7C59]/20 px-2.5 py-1 rounded text-xs font-display font-bold uppercase tracking-wider">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-[#4A7C59] animate-pulse"></span>
+                                  LIVE
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-500 border border-gray-200 px-2.5 py-1 rounded text-xs font-display font-bold uppercase tracking-wider">
+                                  OFFLINE
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <div className="flex items-center justify-center gap-3">
+                                {/* Toggle Live */}
+                                <button
+                                  onClick={() => handleToggleLive(test.id)}
+                                  className={`p-1.5 rounded border transition duration-150 ${
+                                    test.isLive
+                                      ? "bg-red-50 text-[#D94F3D] border-red-100 hover:bg-red-100"
+                                      : "bg-green-50 text-[#4A7C59] border-green-100 hover:bg-green-100"
+                                  }`}
+                                  title={test.isLive ? "Set Offline" : "Set Live"}
+                                >
+                                  {test.isLive ? <Square className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
+                                </button>
+
+                                {/* View Results */}
+                                <Link
+                                  href={`/admin/tests/${test.id}/results`}
+                                  className="inline-flex items-center gap-1 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/25 text-[#C9A84C] px-3.5 py-1.5 rounded border border-[#C9A84C]/20 font-display font-bold uppercase tracking-wider text-xs"
+                                >
+                                  <Trophy className="w-3.5 h-3.5" />
+                                  Scoreboard
+                                </Link>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
 
-              {visibleTests.length === 0 ? (
-                <div className="p-12 text-center text-gray-400">
-                  <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p className="font-display font-semibold uppercase tracking-wider text-sm">No exam templates found</p>
+              {/* Right Column: Broadcast Announcement (takes 1 col) */}
+              <div className="bg-white rounded-[6px] border border-[#DDD8CC] shadow-sm flex flex-col justify-between">
+                <div className="p-6 border-b border-[#DDD8CC] flex items-center gap-2 bg-gray-50/50 rounded-t-[6px]">
+                  <Megaphone className="w-5 h-5 text-[#C9A84C]" />
+                  <h2 className="font-display font-bold text-lg uppercase tracking-wider text-[#0D0F12]">Quick Broadcast</h2>
                 </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse font-body">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-[#DDD8CC] text-[#8B9E6A] font-display font-bold text-xs uppercase tracking-wider">
-                        <th className="px-6 py-4">Test Title</th>
-                        <th className="px-6 py-4">Subject</th>
-                        <th className="px-6 py-4 text-center">Batch</th>
-                        <th className="px-6 py-4 text-center">Questions</th>
-                        <th className="px-6 py-4 text-center">Duration</th>
-                        <th className="px-6 py-4 text-center">Status</th>
-                        <th className="px-6 py-4 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#DDD8CC] text-sm font-semibold">
-                      {visibleTests.map((test) => (
-                        <tr key={test.id} className="hover:bg-gray-50/50 transition duration-100">
-                          <td className="px-6 py-4 font-bold text-[#0D0F12]">{test.title}</td>
-                          <td className="px-6 py-4">
-                            <span className="bg-gray-100 border border-gray-200 text-[#0D0F12] px-2.5 py-1 rounded text-xs uppercase font-display font-bold tracking-wider">
-                              {test.subject}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-center">
-                            <div className="flex flex-wrap justify-center gap-1">
-                              {(test.batch ? test.batch.split(",") : ["NDA"]).map((b) => (
-                                <span key={b} className="bg-[#C9A84C]/10 border border-[#C9A84C]/25 text-[#C9A84C] text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">
-                                  {b}
-                                </span>
-                              ))}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-center font-display font-bold text-md">{test._count.questions}</td>
-                          <td className="px-6 py-4 text-center text-gray-500 font-mono">{test.duration} mins</td>
-                          <td className="px-6 py-4 text-center">
-                            {test.isLive ? (
-                              <span className="inline-flex items-center gap-1 bg-[#4A7C59]/10 text-[#4A7C59] border border-[#4A7C59]/20 px-2.5 py-1 rounded text-xs font-display font-bold uppercase tracking-wider">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#4A7C59] animate-pulse"></span>
-                                LIVE
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-500 border border-gray-200 px-2.5 py-1 rounded text-xs font-display font-bold uppercase tracking-wider">
-                                OFFLINE
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 text-center">
-                            <div className="flex items-center justify-center gap-3">
-                              {/* Toggle Live */}
-                              <button
-                                onClick={() => handleToggleLive(test.id)}
-                                className={`p-1.5 rounded border transition duration-150 ${
-                                  test.isLive
-                                    ? "bg-red-50 text-[#D94F3D] border-red-100 hover:bg-red-100"
-                                    : "bg-green-50 text-[#4A7C59] border-green-100 hover:bg-green-100"
-                                }`}
-                                title={test.isLive ? "Set Offline" : "Set Live"}
-                              >
-                                {test.isLive ? <Square className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
-                              </button>
+                <form onSubmit={handleAnnouncementSubmit} className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                  {announcementSuccess && (
+                    <div className="p-3 bg-green-50 border border-[#4A7C59]/30 rounded text-[#4A7C59] text-xs font-semibold flex items-center gap-1.5 uppercase tracking-wider">
+                      <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                      Alert Sent successfully!
+                    </div>
+                  )}
+                  {announcementError && (
+                    <div className="p-3 bg-red-50 border border-[#D94F3D] rounded text-[#D94F3D] text-xs font-semibold flex items-center gap-1.5">
+                      <ShieldAlert className="w-4 h-4 flex-shrink-0" />
+                      <span>{announcementError}</span>
+                    </div>
+                  )}
 
-                              {/* View Results */}
-                              <Link
-                                href={`/admin/tests/${test.id}/results`}
-                                className="inline-flex items-center gap-1 bg-[#C9A84C]/10 hover:bg-[#C9A84C]/25 text-[#C9A84C] px-3.5 py-1.5 rounded border border-[#C9A84C]/20 font-display font-bold uppercase tracking-wider text-xs"
-                              >
-                                <Trophy className="w-3.5 h-3.5" />
-                                Scoreboard
-                              </Link>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1">
+                        Announcement Title
+                      </label>
+                      <input
+                        type="text"
+                        value={announcementTitle}
+                        onChange={(e) => setAnnouncementTitle(e.target.value)}
+                        placeholder="e.g. Schedule Postponed"
+                        className="w-full px-3.5 py-2 border border-[#DDD8CC] rounded focus:outline-none focus:ring-1 focus:ring-[#C9A84C] focus:border-[#C9A84C] text-xs font-semibold"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1">
+                        Target Batch
+                      </label>
+                      <select
+                        value={announcementBatch}
+                        onChange={(e) => setAnnouncementBatch(e.target.value)}
+                        className="w-full px-3.5 py-2 border border-[#DDD8CC] rounded focus:outline-none focus:ring-1 focus:ring-[#C9A84C] focus:border-[#C9A84C] text-xs font-semibold bg-white"
+                      >
+                        <option value="">All Batches</option>
+                        {BATCH_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1">
+                        Message Content
+                      </label>
+                      <textarea
+                        value={announcementMessage}
+                        onChange={(e) => setAnnouncementMessage(e.target.value)}
+                        placeholder="Write details to notify cadets..."
+                        rows={4}
+                        className="w-full px-3.5 py-2 border border-[#DDD8CC] rounded focus:outline-none focus:ring-1 focus:ring-[#C9A84C] focus:border-[#C9A84C] text-xs font-semibold resize-none"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={announcementLoading}
+                    className="w-full btn-primary text-xs py-2.5 uppercase tracking-widest font-display font-bold"
+                  >
+                    {announcementLoading ? "Publishing..." : "Send Announcement"}
+                  </button>
+                </form>
+              </div>
             </div>
           </>
         )}
