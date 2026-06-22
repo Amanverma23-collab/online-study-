@@ -163,7 +163,9 @@ export default function AnnouncementsPage() {
               <Megaphone className="w-5 h-5 text-[#4A7C59]" />
             </div>
             <div>
-              <h1 className="page-title text-[#0D0F12]">Broadcast Announcement</h1>
+              <h1 className="page-title text-[#0D0F12] uppercase font-bold !text-[6.2vw] sm:!text-xl md:!text-2xl !tracking-tight sm:!tracking-normal whitespace-nowrap">
+                Broadcast Announcement
+              </h1>
               <p className="text-sm text-[#8B9E6A] font-body mt-0.5">
                 Send notifications and FCM push alerts to cadets
               </p>
