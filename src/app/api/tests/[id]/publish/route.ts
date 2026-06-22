@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(
   req: Request,
@@ -37,6 +38,21 @@ export async function POST(
         duration: totalDuration
       }
     });
+
+    // Notify students of the published test
+    try {
+      await createNotification({
+        recipientType: "STUDENT",
+        recipientId: null, // broadcast
+        type: "NEW_TEST",
+        title: `New test available: ${updatedTest.title}`,
+        message: `A new ${updatedTest.batch} test is now live. Attempt it now!`,
+        link: "/student/dashboard",
+        batch: updatedTest.batch
+      });
+    } catch (notifyError) {
+      console.error("Non-critical: Failed to send test publication notification:", notifyError);
+    }
 
     return NextResponse.json({
       success: true,

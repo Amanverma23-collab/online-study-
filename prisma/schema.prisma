@@ -17,6 +17,7 @@ model Admin {
   testSeries      TestSeries[]
   liveClasses     LiveClass[]
   recordedClasses RecordedClass[]
+  fcmToken        String?
 }
 
 model Student {
@@ -31,6 +32,7 @@ model Student {
   attempts        Attempt[]
   seriesPurchases SeriesPurchase[]
   seriesAttempts  SeriesAttempt[]
+  fcmToken        String?
 }
 
 model Test {
@@ -283,4 +285,26 @@ model RecordedClass {
   createdAt    DateTime @default(now())
   adminId      String
   admin        Admin    @relation(fields: [adminId], references: [id])
+}
+
+model Notification {
+  id            String   @id @default(cuid())
+  recipientType String   // "ADMIN" | "STUDENT"
+  recipientId   String?  // specific studentId or adminId; null = broadcast to all students
+  type          String   // "NEW_STUDENT" | "NEW_TEST" | "NEW_LIVE_CLASS" | "NEW_RECORDED_CLASS" | "NEW_ANNOUNCEMENT" | "PURCHASE_SUCCESS"
+  title         String
+  message       String
+  link          String?  // where to navigate on click
+  batch         String?  // target batch(es) (optional, e.g. "NDA" or "NDA,CDS")
+  createdAt     DateTime @default(now())
+  reads         NotificationRead[]
+}
+
+model NotificationRead {
+  id             String       @id @default(cuid())
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  studentId      String?
+  adminId        String?
+  readAt         DateTime     @default(now())
 }

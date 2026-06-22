@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(req: Request) {
   try {
@@ -53,6 +54,20 @@ export async function POST(req: Request) {
         batch: batch.toUpperCase()
       }
     });
+
+    // Notify admins of the registration
+    try {
+      await createNotification({
+        recipientType: "ADMIN",
+        recipientId: null, // broadcast to all admins
+        type: "NEW_STUDENT",
+        title: `New cadet registered: ${student.name}`,
+        message: `${student.name} (${student.mobile}) joined the platform.`,
+        link: "/admin/cadets"
+      });
+    } catch (notifyError) {
+      console.error("Non-critical: Failed to send registration notification:", notifyError);
+    }
 
     return NextResponse.json({
       success: true,

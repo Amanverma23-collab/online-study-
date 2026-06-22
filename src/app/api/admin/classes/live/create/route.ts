@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(req: Request) {
   try {
@@ -41,6 +42,27 @@ export async function POST(req: Request) {
         adminId,
       },
     });
+
+    // Notify students of the live class
+    try {
+      const formattedDate = new Date(liveClass.classDate).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      await createNotification({
+        recipientType: "STUDENT",
+        recipientId: null,
+        type: "NEW_LIVE_CLASS",
+        title: `Live class scheduled: ${liveClass.title}`,
+        message: `${liveClass.subject} — ${formattedDate}`,
+        link: "/student/classes",
+        batch: liveClass.batch
+      });
+    } catch (notifyError) {
+      console.error("Non-critical: Failed to send live class creation notification:", notifyError);
+    }
 
     return NextResponse.json(liveClass);
   } catch (error: any) {

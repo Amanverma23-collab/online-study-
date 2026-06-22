@@ -80,6 +80,21 @@ function StudentDashboardContent() {
     setStudentName(sName);
     setStudentBatch(sBatch);
     fetchDashboardData(sId, sBatch);
+
+    // FCM Permission request with delay
+    const hasAsked = localStorage.getItem("fcm_permission_asked");
+    if (!hasAsked) {
+      setTimeout(() => {
+        import("@/lib/firebase-client")
+          .then(({ requestNotificationPermission }) => {
+            requestNotificationPermission(sId, "student");
+            localStorage.setItem("fcm_permission_asked", "true");
+          })
+          .catch((err) => {
+            console.error("Failed to dynamically import firebase client:", err);
+          });
+      }, 3000);
+    }
   }, []);
 
   const fetchDashboardData = async (sId: string, sBatch: string) => {

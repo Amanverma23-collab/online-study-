@@ -78,6 +78,34 @@ export default function AdminDashboard() {
     fetchData();
   }, [activeBatch]);
 
+  useEffect(() => {
+    const hasAsked = localStorage.getItem("fcm_permission_asked_admin");
+    if (!hasAsked) {
+      const getAdminSession = async () => {
+        try {
+          const res = await fetch("/api/auth/session");
+          const session = await res.json();
+          const adminId = session?.user?.id;
+          if (adminId) {
+            setTimeout(() => {
+              import("@/lib/firebase-client")
+                .then(({ requestNotificationPermission }) => {
+                  requestNotificationPermission(adminId, "admin");
+                  localStorage.setItem("fcm_permission_asked_admin", "true");
+                })
+                .catch((err) => {
+                  console.error("Failed to dynamically import firebase client:", err);
+                });
+            }, 3000);
+          }
+        } catch (err) {
+          console.error("Failed to check admin session for FCM:", err);
+        }
+      };
+      getAdminSession();
+    }
+  }, []);
+
   const handleToggleLive = async (testId: string) => {
     try {
       const res = await fetch(`/api/tests/${testId}/toggle`, { method: "PATCH" });

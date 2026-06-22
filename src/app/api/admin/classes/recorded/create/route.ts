@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(req: Request) {
   try {
@@ -43,6 +44,21 @@ export async function POST(req: Request) {
         adminId,
       },
     });
+
+    // Notify students of the recorded class
+    try {
+      await createNotification({
+        recipientType: "STUDENT",
+        recipientId: null,
+        type: "NEW_RECORDED_CLASS",
+        title: `New recording uploaded: ${recordedClass.className}`,
+        message: `${recordedClass.subject} class recording is now available.`,
+        link: "/student/classes",
+        batch: recordedClass.batch
+      });
+    } catch (notifyError) {
+      console.error("Non-critical: Failed to send recorded class creation notification:", notifyError);
+    }
 
     return NextResponse.json(recordedClass);
   } catch (error: any) {

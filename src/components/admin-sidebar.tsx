@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { Star, LayoutDashboard, PlusCircle, FileText, LogOut, Users, Package, Menu, X, Video } from "lucide-react";
+import { Star, LayoutDashboard, PlusCircle, FileText, LogOut, Users, Package, Menu, X, Video, Megaphone } from "lucide-react";
 import { SINGLE_BATCHES, type SingleBatch } from "@/lib/batch";
 import { useActiveBatch } from "@/contexts/ActiveBatchContext";
+import { NotificationBell } from "./notification-bell";
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -50,7 +51,8 @@ export function AdminSidebar() {
     { name: "My Tests", href: "/admin/tests", icon: FileText },
     { name: "Test Series", href: "/admin/test-series", icon: Package },
     { name: "Classes", href: "/admin/classes", icon: Video },
-    { name: "Cadets", href: "/admin/cadets", icon: Users, showDot: true }
+    { name: "Cadets", href: "/admin/cadets", icon: Users, showDot: true },
+    { name: "Announcements", href: "/admin/announcements", icon: Megaphone }
   ];
 
   return (
@@ -67,24 +69,27 @@ export function AdminSidebar() {
           </button>
           <span className="font-display font-bold text-md tracking-wider uppercase">Officers Saga</span>
         </div>
-        <label className="flex items-center gap-1.5 bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
-          <span className="text-[9px] text-[#8B9E6A] font-display font-bold uppercase tracking-widest">Batch</span>
-          <select
-            value={activeBatch || ""}
-            onChange={(e) => handleBatchChange((e.target.value || null) as SingleBatch | null)}
-            className="bg-transparent text-[#C9A84C] text-[11px] font-display font-bold uppercase tracking-wider focus:outline-none cursor-pointer"
-            aria-label="Active Batch"
-          >
-            <option value="" className="bg-[#0D0F12] text-[#EEF0E8]">
-              ALL
-            </option>
-            {SINGLE_BATCHES.map((b) => (
-              <option key={b} value={b} className="bg-[#0D0F12] text-[#EEF0E8]">
-                {b}
+        <div className="flex items-center gap-3">
+          <NotificationBell userType="admin" />
+          <label className="flex items-center gap-1.5 bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
+            <span className="text-[9px] text-[#8B9E6A] font-display font-bold uppercase tracking-widest">Batch</span>
+            <select
+              value={activeBatch || ""}
+              onChange={(e) => handleBatchChange((e.target.value || null) as SingleBatch | null)}
+              className="bg-transparent text-[#C9A84C] text-[11px] font-display font-bold uppercase tracking-wider focus:outline-none cursor-pointer"
+              aria-label="Active Batch"
+            >
+              <option value="" className="bg-[#0D0F12] text-[#EEF0E8]">
+                ALL
               </option>
-            ))}
-          </select>
-        </label>
+              {SINGLE_BATCHES.map((b) => (
+                <option key={b} value={b} className="bg-[#0D0F12] text-[#EEF0E8]">
+                  {b}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
       </header>
 
       {/* Backdrop overlay for mobile drawer */}
@@ -102,7 +107,7 @@ export function AdminSidebar() {
         } md:translate-x-0 md:static md:w-[220px] md:flex-shrink-0 md:flex`}
       >
         {/* Brand Header */}
-        <div className="p-6 border-b border-[#2E3B1E] flex items-center justify-between gap-2.5">
+        <div className="p-6 border-b border-[#2E3B1E] flex items-center justify-between gap-2.5 relative">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-[#C9A84C] rounded flex items-center justify-center text-[#0D0F12] shadow">
               <Star className="w-5 h-5 fill-current" />
@@ -112,14 +117,19 @@ export function AdminSidebar() {
               <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest">Breifing Room</span>
             </div>
           </div>
-          {/* Close button for mobile */}
-          <button
-            onClick={() => setIsOpen(false)}
-            className="md:hidden p-1 text-[#8B9E6A] hover:text-[#EEF0E8] transition"
-            aria-label="Close Sidebar"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="hidden md:block">
+              <NotificationBell userType="admin" />
+            </div>
+            {/* Close button for mobile */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="md:hidden p-1 text-[#8B9E6A] hover:text-[#EEF0E8] transition"
+              aria-label="Close Sidebar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Active Batch switcher — drives default pre-fill on creation forms */}

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Star, FileText, LogOut, Package, Menu, X, Video } from "lucide-react";
+import { NotificationBell } from "./notification-bell";
 
 export function StudentSidebar() {
   const pathname = usePathname();
@@ -11,11 +12,13 @@ export function StudentSidebar() {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "tests";
 
+  const [studentId, setStudentId] = useState("");
   const [studentName, setStudentName] = useState("");
   const [studentBatch, setStudentBatch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    setStudentId(localStorage.getItem("studentId") || "");
     setStudentName(localStorage.getItem("studentName") || "Candidate");
     setStudentBatch(localStorage.getItem("studentBatch") || "NDA");
   }, []);
@@ -64,9 +67,12 @@ export function StudentSidebar() {
           </button>
           <span className="font-display font-bold text-md tracking-wider uppercase">Officers Saga</span>
         </div>
-        <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
-          {studentBatch} Candidate
-        </span>
+        <div className="flex items-center gap-3">
+          {studentId && <NotificationBell userType="student" userId={studentId} />}
+          <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest bg-[#1C2415] px-2.5 py-1 rounded border border-[#2E3B1E]">
+            {studentBatch} Candidate
+          </span>
+        </div>
       </header>
 
       {/* Backdrop overlay for mobile drawer */}
@@ -84,7 +90,7 @@ export function StudentSidebar() {
         } md:translate-x-0 md:static md:w-[220px] md:flex-shrink-0 md:flex`}
       >
         {/* Brand Header */}
-        <div className="p-6 border-b border-[#2E3B1E] flex items-center justify-between gap-2.5">
+        <div className="p-6 border-b border-[#2E3B1E] flex items-center justify-between gap-2.5 relative">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-[#C9A84C] rounded flex items-center justify-center text-[#0D0F12] shadow">
               <Star className="w-5 h-5 fill-current" />
@@ -94,14 +100,21 @@ export function StudentSidebar() {
               <span className="text-[10px] text-[#8B9E6A] font-display font-semibold uppercase tracking-widest">Candidate Briefing</span>
             </div>
           </div>
-          {/* Close button for mobile */}
-          <button
-            onClick={() => setIsOpen(false)}
-            className="md:hidden p-1 text-[#8B9E6A] hover:text-[#EEF0E8] transition"
-            aria-label="Close Sidebar"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {studentId && (
+              <div className="hidden md:block">
+                <NotificationBell userType="student" userId={studentId} />
+              </div>
+            )}
+            {/* Close button for mobile */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="md:hidden p-1 text-[#8B9E6A] hover:text-[#EEF0E8] transition"
+              aria-label="Close Sidebar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Candidate Profile Details Card */}

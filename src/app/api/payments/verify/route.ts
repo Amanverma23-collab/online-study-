@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import crypto from "crypto";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(req: Request) {
   try {
@@ -33,6 +34,22 @@ export async function POST(req: Request) {
         status: isValid ? "success" : "failed"
       }
     });
+
+    if (isValid) {
+      try {
+        await createNotification({
+          recipientType: "STUDENT",
+          recipientId: studentId,
+          type: "PURCHASE_SUCCESS",
+          title: "Payment successful!",
+          message: `You now have access to the test series.`,
+          link: `/student/series/${testSeriesId}`,
+          batch: null
+        });
+      } catch (notifyError) {
+        console.error("Non-critical: Failed to send payment notification:", notifyError);
+      }
+    }
 
     return NextResponse.json({ success: isValid, status: isValid ? "success" : "failed" });
   } catch (error: any) {
