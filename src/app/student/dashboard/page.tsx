@@ -187,7 +187,7 @@ function StudentDashboardContent() {
       </div>
 
       <div className={`flex-1 overflow-y-auto no-scrollbar pb-8 -mx-6 md:-mx-8 px-6 md:px-8 ${
-        activeTab === "tests" ? "lg:overflow-hidden lg:flex lg:flex-col lg:min-h-0" : ""
+        activeTab === "tests" ? "lg:overflow-hidden lg:flex lg:flex-col lg:min-h-0 lg:pb-0" : ""
       }`}>
         {loading ? (
           <div className="h-64 flex items-center justify-center">
@@ -299,7 +299,7 @@ function StudentDashboardContent() {
         </div>
       ) : (
         /* TESTS & ATTEMPTS VIEW */
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-8 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-8 lg:pb-0 flex-1 min-h-0">
           {/* Left Column: Free/Live Tests */}
           <div className="lg:col-span-2 flex flex-col lg:h-full lg:min-h-0 space-y-4">
             <div className="flex items-center gap-2.5 border-b border-[#DDD8CC] pt-3 pb-3 flex-shrink-0">
