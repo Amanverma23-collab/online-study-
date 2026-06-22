@@ -349,12 +349,12 @@ export default function CreateTestPage() {
               </span>
               <span
                 className={`font-display text-xs uppercase tracking-wider font-bold ${
-                  step === s.num ? "text-[#0D0F12]" : "text-gray-400"
+                  step === s.num ? "text-[#0D0F12] inline" : "text-gray-400 hidden sm:inline"
                 }`}
               >
                 {s.name}
               </span>
-              {s.num < 4 && <span className="text-gray-300 mx-4 md:mx-6 font-light">/</span>}
+              {s.num < 4 && <span className="text-gray-300 mx-2 sm:mx-4 md:mx-6 font-light">/</span>}
             </div>
           ))}
         </div>
