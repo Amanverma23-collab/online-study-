@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Plus, CheckCircle, FileText, Globe, Upload, AlertTriangle, ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Plus, CheckCircle, FileText, Globe, Upload, AlertTriangle, ArrowRight, ShieldCheck, Clock } from "lucide-react";
 
 interface Question {
   id: string;
@@ -542,7 +542,7 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                     {wizardStep > s.num ? "✓" : s.num}
                   </span>
                   <span
-                    className={`font-display text-xs uppercase tracking-wider font-bold ${
+                    className={`font-display text-xs uppercase tracking-wider font-bold whitespace-nowrap ${
                       wizardStep === s.num ? "text-[#0D0F12] inline" : "text-gray-400 hidden sm:inline"
                     }`}
                   >
@@ -663,20 +663,20 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
               {/* WIZARD STEP 2 */}
               {wizardStep === 2 && (
                 <div className="space-y-6">
-                  <div className="flex justify-between items-center border-b pb-4 mb-6">
-                    <h3 className="font-display font-bold text-[#0D0F12] text-sm uppercase tracking-wide">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-4 mb-6">
+                    <h3 className="font-display font-bold text-[#0D0F12] text-sm uppercase tracking-wide whitespace-nowrap">
                       Step 2: Add Sections Hub
                     </h3>
                     <button
                       onClick={handlePublishTest}
                       disabled={loading || totalAddedSectionsCount === 0}
-                      className="btn-primary disabled:opacity-50"
+                      className="px-3 py-1.5 text-[11px] bg-[#C9A84C] hover:bg-[#BCA147] text-white font-display font-bold uppercase tracking-wider rounded transition duration-150 shadow-sm disabled:opacity-50 active:scale-95"
                     >
                       {loading ? "Publishing..." : "Publish Test →"}
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {actualSubjects.map((subject) => {
                       const section = sectionsData[subject];
                       const isAdded = !!section;
@@ -684,42 +684,71 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                       return (
                         <div
                           key={subject}
-                          className={`p-6 rounded-[6px] border flex flex-col justify-between min-h-[160px] transition duration-200 ${
+                          className={`p-6 rounded-xl border border-l-4 flex flex-col justify-between min-h-[200px] transition-all duration-300 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] ${
                             isAdded
-                              ? "bg-white border-[#4A7C59] shadow-sm relative overflow-hidden"
-                              : "bg-white border-[#DDD8CC] shadow-sm hover:border-[#C9A84C]"
+                              ? "border-[#4A7C59]/40 border-l-[#4A7C59] bg-[#4A7C59]/[0.01] hover:bg-[#4A7C59]/[0.03]"
+                              : "border-[#DDD8CC]/80 border-l-[#C9A84C] hover:border-[#C9A84C]/80 hover:bg-[#F5F3EC]/20"
                           }`}
                         >
-                          {isAdded && (
-                            <div className="absolute top-0 right-0 bg-[#4A7C59] text-white px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-bl-sm">
-                              Added ✓
-                            </div>
-                          )}
                           <div>
-                            <h3 className="font-display font-bold text-lg text-navy uppercase tracking-wide">
-                              {subject}
-                            </h3>
-                            <p className="text-xs text-[#8B9E6A] font-semibold mt-1">
-                              {isAdded
-                                ? `Section contains ${section.questionsCount} questions (${section.duration} min)`
-                                : "Section status: Not Added"}
-                            </p>
+                            {/* Card Header Status Indicator */}
+                            <div className="flex justify-between items-center pb-3 border-b border-[#F0EDE4]">
+                              <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-display font-black text-xs select-none tracking-wider ${
+                                isAdded ? "bg-[#4A7C59]/10 text-[#4A7C59]" : "bg-[#C9A84C]/10 text-[#C9A84C]"
+                              }`}>
+                                {subject.substring(0, 2).toUpperCase()}
+                              </span>
+                              {isAdded ? (
+                                <span className="bg-[#4A7C59]/10 text-[#4A7C59] px-2.5 py-0.5 rounded-full text-[9px] font-display font-bold uppercase tracking-wider flex items-center gap-1 select-none">
+                                  <ShieldCheck className="w-3 h-3" /> Configured
+                                </span>
+                              ) : (
+                                <span className="bg-red-50 text-[#D94F3D] px-2.5 py-0.5 rounded-full text-[9px] font-display font-bold uppercase tracking-wider flex items-center gap-1 select-none">
+                                  <AlertTriangle className="w-3 h-3" /> Pending
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Card Content details */}
+                            <div className="mt-4">
+                              <h3 className="font-display font-black text-sm text-[#0D0F12] uppercase tracking-wider">
+                                {subject}
+                              </h3>
+                              {isAdded ? (
+                                <div className="grid grid-cols-2 gap-2 mt-3 text-[11px] text-[#8B9E6A] font-semibold font-body">
+                                  <div className="flex items-center gap-1.5 bg-[#F5F3EC]/70 px-2.5 py-2 rounded-md border border-[#F0EDE4]">
+                                    <FileText className="w-3.5 h-3.5 text-[#4A7C59]" />
+                                    <span>Questions: <strong className="text-[#0D0F12] font-mono">{section.questionsCount} Qs</strong></span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 bg-[#F5F3EC]/70 px-2.5 py-2 rounded-md border border-[#F0EDE4]">
+                                    <Clock className="w-3.5 h-3.5 text-[#4A7C59]" />
+                                    <span>Duration: <strong className="text-[#0D0F12] font-mono">{section.duration} Mins</strong></span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-xs text-gray-400 font-semibold font-body mt-2.5 flex items-center gap-1.5 bg-[#F5F3EC]/30 p-2.5 rounded-md border border-dashed border-[#DDD8CC]">
+                                  <AlertTriangle className="w-3.5 h-3.5 text-gray-300" />
+                                  No question files uploaded yet
+                                </p>
+                              )}
+                            </div>
                           </div>
 
-                          <div className="mt-6 flex justify-end">
+                          {/* Footer Actions */}
+                          <div className="mt-5 pt-3">
                             {isAdded ? (
                               <button
                                 onClick={() => startConfiguringSection(subject)}
-                                className="text-xs font-bold uppercase text-[#C9A84C] hover:underline"
+                                className="w-full py-2 bg-white hover:bg-[#C9A84C]/5 text-[#C9A84C] border border-[#C9A84C]/40 hover:border-[#C9A84C] rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all duration-150 shadow-sm flex items-center justify-center gap-1.5 active:scale-[0.98]"
                               >
                                 Reconfigure Section
                               </button>
                             ) : (
                               <button
                                 onClick={() => startConfiguringSection(subject)}
-                                className="bg-[#C9A84C] hover:bg-[#BCA147] text-white px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-sm transition shadow-sm"
+                                className="w-full py-2 bg-[#2E3B1E] hover:bg-[#1E2713] text-white border border-[#2E3B1E] rounded-lg text-xs font-display font-bold uppercase tracking-wider transition-all duration-150 shadow-sm flex items-center justify-center gap-1.5 active:scale-[0.98]"
                               >
-                                + Add Section
+                                + Add Section Details
                               </button>
                             )}
                           </div>
