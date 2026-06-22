@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Plus, CheckCircle, FileText, Globe, Upload, AlertTriangle, ArrowRight, ShieldCheck, Clock, Check } from "lucide-react";
+import { ArrowLeft, Plus, CheckCircle, FileText, Globe, Upload, AlertTriangle, ArrowRight, ShieldCheck, Clock, Check, Edit } from "lucide-react";
 
 interface Question {
   id: string;
@@ -82,6 +82,10 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
   const [excelFile, setExcelFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [extractedQuestions, setExtractedQuestions] = useState<ExtractedQuestion[]>([]);
+
+  // Edit question state
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editingQuestion, setEditingQuestion] = useState<ExtractedQuestion | null>(null);
 
   useEffect(() => {
     fetchSeriesDetails();
@@ -278,6 +282,30 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
     setExtractedQuestions((prev) =>
       prev.map((q, idx) => (idx === index ? { ...q, correctOption: option } : q))
     );
+  };
+
+  const handleEditQuestion = (index: number) => {
+    setEditingIndex(index);
+    setEditingQuestion({ ...extractedQuestions[index] });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    setEditingQuestion(null);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingIndex === null || !editingQuestion) return;
+    setExtractedQuestions((prev) =>
+      prev.map((q, idx) => (idx === editingIndex ? editingQuestion : q))
+    );
+    setEditingIndex(null);
+    setEditingQuestion(null);
+  };
+
+  const handleEditingFieldChange = (field: keyof ExtractedQuestion, value: string) => {
+    if (!editingQuestion) return;
+    setEditingQuestion({ ...editingQuestion, [field]: value });
   };
 
   const handleSaveSection = async () => {
@@ -954,6 +982,7 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                       <div className="space-y-5">
                         {extractedQuestions.map((q, index) => {
                           const isUnanswered = q.correctOption === "";
+                          const isEditing = editingIndex === index;
 
                           return (
                             <div
@@ -964,43 +993,111 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                                   : "border-[#2E3B1E] bg-[#1C2415]"
                               }`}
                             >
-                              <h3 className="font-display font-bold text-[#EEF0E8] text-sm mb-4 flex items-start gap-2.5">
-                                <span className="bg-[#C9A84C] text-[#0D0F12] px-2 py-0.5 rounded-sm text-xs font-mono font-bold mt-0.5">
-                                  {q.order}
-                                </span>
-                                <span className="leading-relaxed">{q.questionText}</span>
-                              </h3>
-
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                                {(["A", "B", "C", "D"] as const).map((opt) => {
-                                  const optionKey = `option${opt}` as keyof ExtractedQuestion;
-                                  const optionText = q[optionKey] as string;
-                                  const isSelected = q.correctOption === opt;
-
-                                  return (
-                                    <button
-                                      key={opt}
-                                      onClick={() => handleCorrectOptionSelect(index, opt)}
-                                      className={`flex items-start text-left gap-3 px-4 py-3 rounded border text-xs transition duration-150 ${
-                                        isSelected
-                                          ? "bg-[#2E3B1E] text-[#F0D080] border-[#C9A84C] font-semibold"
-                                          : "bg-[#1C2415] hover:bg-[#2E3B1E]/50 text-[#EEF0E8] border-[#2E3B1E]"
-                                      }`}
-                                    >
-                                      <span
-                                        className={`w-[18px] h-[18px] rounded-full border flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 mt-0.5 ${
-                                          isSelected
-                                            ? "bg-[#C9A84C] border-[#C9A84C] text-[#0D0F12]"
-                                            : "border-[#8B9E6A] bg-[#0D0F12] text-[#8B9E6A]"
-                                        }`}
+                              {isEditing ? (
+                                /* Inline Edit Form */
+                                <div className="space-y-4">
+                                  <div className="flex items-center justify-between">
+                                    <span className="bg-[#C9A84C] text-[#0D0F12] px-2 py-0.5 rounded-sm text-xs font-mono font-bold">
+                                      {q.order}
+                                    </span>
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={handleSaveEdit}
+                                        className="px-3 py-1.5 bg-[#4A7C59] hover:bg-[#3D6A4A] text-white rounded text-xs font-display font-bold uppercase tracking-wider transition duration-150"
                                       >
-                                        {opt}
+                                        Save
+                                      </button>
+                                      <button
+                                        onClick={handleCancelEdit}
+                                        className="px-3 py-1.5 bg-[#2E3B1E] hover:bg-[#1E2713] text-[#EEF0E8] rounded text-xs font-display font-bold uppercase tracking-wider transition duration-150"
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">
+                                      Question Text
+                                    </label>
+                                    <textarea
+                                      value={editingQuestion?.questionText || ""}
+                                      onChange={(e) => handleEditingFieldChange("questionText", e.target.value)}
+                                      rows={3}
+                                      className="w-full px-3 py-2.5 bg-[#0D0F12] border border-[#2E3B1E] rounded text-[#EEF0E8] text-sm font-body focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 resize-none"
+                                    />
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {(["A", "B", "C", "D"] as const).map((opt) => {
+                                      const optionKey = `option${opt}` as keyof ExtractedQuestion;
+                                      return (
+                                        <div key={opt}>
+                                          <label className="block text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">
+                                            Option {opt}
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={(editingQuestion?.[optionKey] as string) || ""}
+                                            onChange={(e) => handleEditingFieldChange(optionKey, e.target.value)}
+                                            className="w-full px-3 py-2 bg-[#0D0F12] border border-[#2E3B1E] rounded text-[#EEF0E8] text-xs font-body focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20"
+                                          />
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ) : (
+                                /* Normal View */
+                                <>
+                                  <div className="flex items-start justify-between gap-3">
+                                    <h3 className="font-display font-bold text-[#EEF0E8] text-sm mb-4 flex items-start gap-2.5 flex-1">
+                                      <span className="bg-[#C9A84C] text-[#0D0F12] px-2 py-0.5 rounded-sm text-xs font-mono font-bold mt-0.5">
+                                        {q.order}
                                       </span>
-                                      <span className="leading-relaxed font-body font-medium">{optionText}</span>
+                                      <span className="leading-relaxed">{q.questionText}</span>
+                                    </h3>
+                                    <button
+                                      onClick={() => handleEditQuestion(index)}
+                                      className="flex-shrink-0 p-1.5 rounded hover:bg-[#2E3B1E] text-[#8B9E6A] hover:text-[#C9A84C] transition duration-150"
+                                      title="Edit question"
+                                    >
+                                      <Edit className="w-4 h-4" />
                                     </button>
-                                  );
-                                })}
-                              </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                                    {(["A", "B", "C", "D"] as const).map((opt) => {
+                                      const optionKey = `option${opt}` as keyof ExtractedQuestion;
+                                      const optionText = q[optionKey] as string;
+                                      const isSelected = q.correctOption === opt;
+
+                                      return (
+                                        <button
+                                          key={opt}
+                                          onClick={() => handleCorrectOptionSelect(index, opt)}
+                                          className={`flex items-start text-left gap-3 px-4 py-3 rounded border text-xs transition duration-150 ${
+                                            isSelected
+                                              ? "bg-[#2E3B1E] text-[#F0D080] border-[#C9A84C] font-semibold"
+                                              : "bg-[#1C2415] hover:bg-[#2E3B1E]/50 text-[#EEF0E8] border-[#2E3B1E]"
+                                          }`}
+                                        >
+                                          <span
+                                            className={`w-[18px] h-[18px] rounded-full border flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 mt-0.5 ${
+                                              isSelected
+                                                ? "bg-[#C9A84C] border-[#C9A84C] text-[#0D0F12]"
+                                                : "border-[#8B9E6A] bg-[#0D0F12] text-[#8B9E6A]"
+                                            }`}
+                                          >
+                                            {opt}
+                                          </span>
+                                          <span className="leading-relaxed font-body font-medium">{optionText}</span>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </>
+                              )}
                             </div>
                           );
                         })}
