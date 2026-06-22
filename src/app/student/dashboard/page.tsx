@@ -186,7 +186,9 @@ function StudentDashboardContent() {
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto md:overflow-hidden no-scrollbar pb-8 -mx-6 md:-mx-8 px-6 md:px-8">
+      <div className={`flex-1 overflow-y-auto no-scrollbar pb-8 -mx-6 md:-mx-8 px-6 md:px-8 ${
+        activeTab === "tests" ? "lg:overflow-hidden lg:flex lg:flex-col lg:min-h-0" : ""
+      }`}>
         {loading ? (
           <div className="h-64 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C9A84C]"></div>
