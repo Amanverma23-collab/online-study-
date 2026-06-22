@@ -126,7 +126,7 @@ export function NotificationBell({ userType, userId }: NotificationBellProps) {
       {/* Bell Icon Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative w-9 h-9 bg-[#1C2415] hover:bg-[#2E3B1E] border border-[#2E3B1E] rounded flex items-center justify-center text-[#EEF0E8] transition shadow"
+        className="relative w-9 h-9 bg-[#1C2415] hover:bg-[#C9A84C] border border-[#2E3B1E] hover:border-[#C9A84C] rounded flex items-center justify-center text-[#EEF0E8] hover:text-[#0D0F12] transition duration-150 shadow cursor-pointer"
         aria-label="View Notifications"
       >
         <Bell className="w-5 h-5" />
@@ -139,7 +139,7 @@ export function NotificationBell({ userType, userId }: NotificationBellProps) {
 
       {/* Floating Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 md:left-full md:right-auto md:ml-2.5 mt-2 w-80 bg-[#0D0F12] border border-[#2E3B1E] rounded shadow-2xl overflow-hidden z-50 text-[#EEF0E8] font-display">
+        <div className="absolute right-0 mt-2 w-80 bg-[#0D0F12] border border-[#2E3B1E] rounded shadow-2xl overflow-hidden z-50 text-[#EEF0E8] font-display">
           {/* Header */}
           <div className="p-3 border-b border-[#2E3B1E] flex justify-between items-center bg-[#1C2415]">
             <span className="font-bold text-xs uppercase tracking-wider text-[#EEF0E8] flex items-center gap-1.5">
