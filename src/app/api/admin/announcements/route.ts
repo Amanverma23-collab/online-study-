@@ -2,6 +2,32 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createNotification } from "@/lib/notifications";
+import { db } from "@/lib/db";
+
+export async function GET(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    const adminId = (session?.user as any)?.id;
+
+    if (!adminId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const announcements = await db.notification.findMany({
+      where: {
+        type: "NEW_ANNOUNCEMENT"
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+
+    return NextResponse.json(announcements);
+  } catch (error: any) {
+    console.error("Fetch Announcements Error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
 
 export async function POST(req: Request) {
   try {
