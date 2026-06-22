@@ -920,9 +920,9 @@ export default function ResultAnalysisPage({ params }: { params: { attemptId: st
                       {/* Second Place */}
                       {second && (
                         <div className="flex flex-col items-center flex-1 max-w-[90px]">
-                          <div className="w-9 h-9 rounded-full bg-gray-150 border-2 border-gray-300 flex items-center justify-center font-display font-extrabold text-xs text-gray-500 relative mb-1 shadow-sm">
+                          <div className="w-11 h-11 rounded-full bg-[#C9A84C]/20 border-2 border-[#C9A84C] flex items-center justify-center font-display font-extrabold text-sm text-[#C9A84C] relative mb-1 shadow-md">
                             {second.name.charAt(0)}
-                            <span className="absolute -top-1 -right-1 bg-gray-400 text-white w-4.5 h-4.5 rounded-full flex items-center justify-center text-[7.5px] border border-white font-bold">2</span>
+                            <span className="absolute -top-1.5 -right-1.5 bg-[#C9A84C] text-[#0D0F12] w-5 h-5 rounded-full flex items-center justify-center text-[8.5px] border border-white font-extrabold">2</span>
                           </div>
                           <span className="text-[9px] font-bold text-[#0D0F12] font-body truncate w-full text-center leading-none">{second.name}</span>
                           <span className="text-[8px] font-mono text-[#8B9E6A] font-bold mt-1">{second.score.toFixed(1)}m</span>
@@ -954,9 +954,9 @@ export default function ResultAnalysisPage({ params }: { params: { attemptId: st
                       {/* Third Place */}
                       {third && (
                         <div className="flex flex-col items-center flex-1 max-w-[90px]">
-                          <div className="w-9 h-9 rounded-full bg-[#8B9E6A]/20 border-2 border-[#8B9E6A]/30 flex items-center justify-center font-display font-extrabold text-xs text-[#8B9E6A] relative mb-1 shadow-sm">
+                          <div className="w-11 h-11 rounded-full bg-[#C9A84C]/20 border-2 border-[#C9A84C] flex items-center justify-center font-display font-extrabold text-sm text-[#C9A84C] relative mb-1 shadow-md">
                             {third.name.charAt(0)}
-                            <span className="absolute -top-1 -right-1 bg-[#8B9E6A] text-white w-4.5 h-4.5 rounded-full flex items-center justify-center text-[7.5px] border border-white font-bold">3</span>
+                            <span className="absolute -top-1.5 -right-1.5 bg-[#C9A84C] text-[#0D0F12] w-5 h-5 rounded-full flex items-center justify-center text-[8.5px] border border-white font-extrabold">3</span>
                           </div>
                           <span className="text-[9px] font-bold text-[#0D0F12] font-body truncate w-full text-center leading-none">{third.name}</span>
                           <span className="text-[8px] font-mono text-[#8B9E6A] font-bold mt-1">{third.score.toFixed(1)}m</span>
@@ -977,10 +977,10 @@ export default function ResultAnalysisPage({ params }: { params: { attemptId: st
                 {data.topRankers.slice(3).map((user) => (
                   <div key={user.rank} className="py-2.5 flex justify-between items-center gap-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="font-display font-extrabold text-[11px] text-[#8B9E6A] w-5 text-center">
+                      <span className="font-display font-extrabold text-[11px] text-[#C9A84C] w-5 text-center">
                         {user.rank}
                       </span>
-                      <div className="w-6.5 h-6.5 bg-[#2C6E8A]/10 border border-[#2C6E8A]/20 text-[#2C6E8A] rounded-full flex items-center justify-center font-display font-bold text-[10px] shadow-inner">
+                      <div className="w-9 h-9 bg-[#C9A84C]/20 border-2 border-[#C9A84C] text-[#C9A84C] rounded-full flex items-center justify-center font-display font-extrabold text-xs shadow-md">
                         {user.name.charAt(0)}
                       </div>
                       <span className="font-semibold text-[#0D0F12] text-[11px] font-body">{user.name}</span>
