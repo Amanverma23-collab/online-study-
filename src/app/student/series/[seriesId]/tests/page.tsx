@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Clock, Lock, Unlock, CheckCircle, ChevronRight, Play, Star, AlertCircle, FileText } from "lucide-react";
 import Link from "next/link";
 
+const formatSubject = (sub: string) => {
+  if (!sub) return "";
+  const trimSub = sub.trim();
+  const lower = trimSub.toLowerCase();
+  if (lower === "general knowledge") return "GK";
+  if (lower === "mathematics") return "Maths";
+  return trimSub;
+};
+
 interface SeriesTestWithStatus {
   id: string;
   title: string;
@@ -209,7 +218,7 @@ export default function SeriesTestsPage({ params }: { params: { seriesId: string
 
                       <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-display font-semibold uppercase tracking-wider">
                         <span className={`px-2 py-0.5 rounded ${isLocked ? "bg-gray-100 text-gray-400" : "bg-[#C9A84C]/10 text-[#C9A84C]"}`}>
-                          {test.subject}
+                          {formatSubject(test.subject)}
                         </span>
                         <span className={`flex items-center gap-1 px-2 py-0.5 rounded font-mono ${isLocked ? "bg-gray-100 text-gray-400" : "bg-gray-100 text-gray-600"}`}>
                           <Clock className="w-3 h-3" /> {test.duration}m

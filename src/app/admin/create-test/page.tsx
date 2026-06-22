@@ -57,8 +57,8 @@ export default function CreateTestPage() {
   const [extractedQuestions, setExtractedQuestions] = useState<ExtractedQuestion[]>([]);
 
   const subjectsList = [
-    "General Knowledge",
-    "Mathematics",
+    "GK",
+    "Maths",
     "English",
     "Physics",
     "Chemistry",
@@ -94,9 +94,9 @@ export default function CreateTestPage() {
       const batches = targetBatch.split(",").map((b) => b.trim());
       const additional: string[] = [];
       if (batches.includes("NDA") || batches.includes("CDS")) {
-        additional.push("General Knowledge", "Mathematics", "English");
+        additional.push("GK", "Maths", "English");
       } else if (batches.includes("OTA")) {
-        additional.push("General Knowledge", "English");
+        additional.push("GK", "English");
       }
       additional.forEach((sub) => {
         if (!resolved.includes(sub)) {
@@ -135,7 +135,7 @@ export default function CreateTestPage() {
 
   const startConfiguringSection = (subject: string) => {
     setActiveSubject(subject);
-    setSectionDuration(subject === "Mathematics" ? "120" : "120"); // pre-populate with CDS defaults or 40/120
+    setSectionDuration(subject === "Maths" ? "120" : "120"); // pre-populate with CDS defaults or 40/120
     setSectionMarksPerQ(defaultMarksPerQ);
     setSectionNegativeMarks(defaultNegativeMarks);
     setExtractedQuestions([]);
@@ -453,7 +453,7 @@ export default function CreateTestPage() {
                     return (
                       <label
                         key={sub}
-                        className={`flex items-center gap-2.5 p-3 border rounded cursor-pointer transition select-none text-xs font-bold uppercase tracking-wide ${
+                        className={`flex items-center gap-2.5 p-3 border rounded cursor-pointer transition select-none text-[10px] sm:text-xs font-bold uppercase tracking-wide ${
                           isChecked
                             ? "bg-[#2E3B1E]/10 border-[#C9A84C] text-[#C9A84C]"
                             : "bg-[#F5F3EC]/30 border-[#DDD8CC] hover:bg-gray-50 text-gray-700"

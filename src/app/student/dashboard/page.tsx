@@ -6,6 +6,15 @@ import { Star, LogOut, Radio, Clock, Award, FileText, CheckCircle, ChevronRight,
 import Link from "next/link";
 import { NotificationBell } from "@/components/notification-bell";
 
+const formatSubject = (sub: string) => {
+  if (!sub) return "";
+  const trimSub = sub.trim();
+  const lower = trimSub.toLowerCase();
+  if (lower === "general knowledge") return "GK";
+  if (lower === "mathematics") return "Maths";
+  return trimSub;
+};
+
 interface LiveTest {
   id: string;
   title: string;
@@ -227,7 +236,7 @@ function StudentDashboardContent() {
                         <div className="flex flex-wrap gap-1.5 mb-4">
                           {s.subjects.map((sub) => (
                             <span key={sub} className="bg-gray-150 text-gray-700 px-2 py-0.5 rounded text-[9px] font-display font-bold uppercase">
-                              {sub}
+                              {formatSubject(sub)}
                             </span>
                           ))}
                         </div>
@@ -283,7 +292,7 @@ function StudentDashboardContent() {
                         ))}
                         {series.subjects.map((sub) => (
                           <span key={sub} className="bg-[#C9A84C]/5 text-[#C9A84C] px-2 py-0.5 rounded text-[9px] font-display font-bold uppercase border border-[#C9A84C]/10">
-                            {sub}
+                            {formatSubject(sub)}
                           </span>
                         ))}
                       </div>
@@ -322,7 +331,7 @@ function StudentDashboardContent() {
                       <div key={test.id} className="bg-white rounded-[6px] border border-[#DDD8CC] p-6 shadow-sm hover:shadow-md transition duration-150 flex flex-col justify-between">
                         <div>
                           <div className="flex justify-between items-start mb-3">
-                            <span className="bg-[#C9A84C]/10 border border-[#C9A84C]/20 text-[#C9A84C] px-2.5 py-0.5 rounded text-[10px] font-display font-bold uppercase tracking-wider">{test.subject}</span>
+                            <span className="bg-[#C9A84C]/10 border border-[#C9A84C]/20 text-[#C9A84C] px-2.5 py-0.5 rounded text-[10px] font-display font-bold uppercase tracking-wider">{formatSubject(test.subject)}</span>
                             <span className="text-xs text-[#8B9E6A] flex items-center gap-1 font-mono font-semibold"><Clock className="w-3.5 h-3.5 text-[#8B9E6A]" /> {test.duration} MINS</span>
                           </div>
                           <h3 className="font-display font-bold text-md text-[#0D0F12] mb-2 uppercase">{test.title}</h3>

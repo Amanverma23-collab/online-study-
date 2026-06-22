@@ -383,11 +383,20 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
     );
   }
 
-  const seriesSubjectsList = Array.isArray(series.subjects)
+  const formatSubject = (sub: string) => {
+    if (!sub) return "";
+    const trimSub = sub.trim();
+    const lower = trimSub.toLowerCase();
+    if (lower === "general knowledge") return "GK";
+    if (lower === "mathematics") return "Maths";
+    return trimSub;
+  };
+
+  const seriesSubjectsList = (Array.isArray(series.subjects)
     ? series.subjects
     : typeof series.subjects === "string"
     ? series.subjects.split(",").map((s) => s.trim()).filter(Boolean)
-    : [];
+    : []).map(formatSubject);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F5F3EC] text-[#0D0F12]">
@@ -478,7 +487,7 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                               key={sec.id}
                               className="bg-white border border-[#DDD8CC] text-[#8B9E6A] text-[9.5px] font-display font-bold uppercase tracking-wider px-2 py-1 rounded"
                             >
-                              {sec.subject} ({sec.questions.length} Q)
+                              {formatSubject(sec.subject)} ({sec.questions.length} Q)
                             </span>
                           ))}
                         </div>
@@ -620,7 +629,7 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                         return (
                           <label
                             key={sub}
-                            className={`flex items-center gap-2.5 p-3 border rounded cursor-pointer transition select-none text-xs font-bold uppercase tracking-wide ${
+                            className={`flex items-center gap-2.5 p-3 border rounded cursor-pointer transition select-none text-[10px] sm:text-xs font-bold uppercase tracking-wide ${
                               isChecked
                                 ? "bg-[#2E3B1E]/10 border-[#C9A84C] text-[#C9A84C]"
                                 : "bg-[#F5F3EC]/30 border-[#DDD8CC] hover:bg-gray-50 text-gray-700"

@@ -4,6 +4,15 @@ import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { User, Info, BookOpen, ChevronLeft, ChevronRight, Check, X, Clock, AlertCircle } from "lucide-react";
 
+const formatSubject = (sub: string) => {
+  if (!sub) return "";
+  const trimSub = sub.trim();
+  const lower = trimSub.toLowerCase();
+  if (lower === "general knowledge") return "GK";
+  if (lower === "mathematics") return "Maths";
+  return trimSub;
+};
+
 interface Question {
   id: string;
   order: number;
@@ -231,7 +240,8 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
         if (data.finished) {
           router.push(data.redirectTo);
         } else {
-          alert(`${currentSection?.subject} section time expired. Moving to next section.`);
+          // Alert and load next section
+          alert(`${formatSubject(currentSection?.subject || "")} section time expired. Moving to next section.`);
           await loadSectionDetails(attemptId);
         }
       } else {
@@ -269,7 +279,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
         if (data.finished) {
           router.push(data.redirectTo);
         } else {
-          alert(`${currentSection?.subject} section submitted. Starting next section.`);
+          alert(`${formatSubject(currentSection?.subject || "")} section submitted. Starting next section.`);
           await loadSectionDetails(attemptId);
         }
       } else {
@@ -490,7 +500,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
                     disabled
                     className={`label-badge px-2.5 py-1.5 rounded-sm uppercase flex items-center gap-1.5 transition text-[10px] font-bold flex-shrink-0 ${secClass}`}
                   >
-                    {sec.subject}
+                    {formatSubject(sec.subject)}
                     {sec.isCompleted && <Check className="w-3 h-3 text-[#4A7C59]" />}
                   </button>
                 );
@@ -719,7 +729,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
               </div>
 
               <div className="px-4 py-2.5 bg-[#0D0F12] text-[#EEF0E8] label-badge border-b border-[#2E3B1E] flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5" /> Section : {currentSection.subject}
+                <BookOpen className="w-3.5 h-3.5" /> Section : {formatSubject(currentSection.subject)}
               </div>
 
               {/* Questions Grid */}
@@ -841,7 +851,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
                     : "border-transparent text-gray-500"
                 }`}
               >
-                {sec.subject}
+                {formatSubject(sec.subject)}
               </button>
             );
           })}
@@ -1027,7 +1037,7 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
           </div>
 
           <div className="px-4 py-2.5 bg-[#0D0F12] text-[#EEF0E8] label-badge border-b border-[#2E3B1E] flex items-center gap-1.5">
-            <BookOpen className="w-3.5 h-3.5" /> Section : {currentSection.subject}
+            <BookOpen className="w-3.5 h-3.5" /> Section : {formatSubject(currentSection.subject)}
           </div>
 
           <div className="p-4">
@@ -1104,12 +1114,12 @@ export default function SeriesTestInterface({ params }: { params: { seriesId: st
                 <Info className="w-6 h-6" />
               </div>
               <h3 className="font-display font-bold text-xl uppercase tracking-wider text-[#EEF0E8]">
-                {isFinalSection ? "Submit Test?" : `Submit ${currentSection.subject}?`}
+                {isFinalSection ? "Submit Test?" : `Submit ${formatSubject(currentSection.subject)}?`}
               </h3>
               <p className="text-xs text-[#8B9E6A] font-semibold mt-1">
                 {isFinalSection
                   ? "Are you sure you want to end your exam session? Scores calculate immediately."
-                  : `Are you sure you want to submit the ${currentSection.subject} section? You cannot return to this section afterwards.`}
+                  : `Are you sure you want to submit the ${formatSubject(currentSection.subject)} section? You cannot return to this section afterwards.`}
               </p>
             </div>
 

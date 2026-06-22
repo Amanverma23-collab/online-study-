@@ -5,6 +5,15 @@ import { useRouter } from "next/navigation";
 import { Trophy, Star, Award, CheckCircle2, Percent, Users2, ChevronUp, ChevronDown, Check, X, ShieldAlert, ArrowLeft, User, BookOpen, Clock, MapPin, List, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
+const formatSubject = (sub: string) => {
+  if (!sub) return "";
+  const trimSub = sub.trim();
+  const lower = trimSub.toLowerCase();
+  if (lower === "general knowledge") return "GK";
+  if (lower === "mathematics") return "Maths";
+  return trimSub;
+};
+
 interface StatRow {
   score: number;
   accuracy: number;
@@ -132,11 +141,11 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
   const aboveCutoff = cutoffGap >= 0;
 
   // Extract unique subjects for subject filters
-  const uniqueSubjects = Array.from(new Set(data.questions.map(q => q.subject)));
+  const uniqueSubjects = Array.from(new Set(data.questions.map(q => formatSubject(q.subject))));
 
   // Filter questions based on filters
   const filteredQuestions = data.questions.filter(q => {
-    const matchesSubject = subjectFilter === "All" || q.subject === subjectFilter;
+    const matchesSubject = subjectFilter === "All" || formatSubject(q.subject) === subjectFilter;
     const isCorrect = q.selectedOption === q.correctOption;
     const isUnanswered = q.selectedOption === null;
 
@@ -279,10 +288,11 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                 </thead>
                 <tbody className="divide-y divide-[#DDD8CC] text-sm font-semibold">
                   {data.subjectBreakdown && data.subjectBreakdown.map((row: any) => {
-                    const isTotal = row.subject === "Total";
+                    const displaySub = formatSubject(row.subject);
+                    const isTotal = displaySub === "Total";
                     return (
-                      <tr key={row.subject} className={isTotal ? "bg-[#F5F3EC] font-bold" : "bg-white hover:bg-gray-50/50"}>
-                        <td className="px-6 py-4 uppercase font-display tracking-wider text-xs">{row.subject}</td>
+                      <tr key={row.subject} className={isTotal ? "bg-[#F5F3EC] font-bold" : "bg-white hover:bg-gray-55"}>
+                        <td className="px-6 py-4 uppercase font-display tracking-wider text-xs">{displaySub}</td>
                         <td className="px-6 py-4 font-mono">{row.score}</td>
                         <td className="px-6 py-4 font-mono text-[#4A7C59]">{row.correct}</td>
                         <td className="px-6 py-4 font-mono text-[#D94F3D]">{row.wrong}</td>
@@ -524,7 +534,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                             <span className="question-text text-[#0D0F12] leading-relaxed">{q.questionText}</span>
                           </h3>
                           <span className="text-[10px] bg-gray-100 text-gray-400 font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded mt-2 inline-block">
-                            Section: {q.subject}
+                            Section: {formatSubject(q.subject)}
                           </span>
                         </div>
                         <div>
@@ -845,7 +855,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                               {q.order}
                             </span>
                             <span className="text-[10px] font-display font-bold uppercase tracking-wider text-[#8B9E6A]">
-                              {q.subject}
+                              {formatSubject(q.subject)}
                             </span>
                           </div>
                         </div>
@@ -1050,7 +1060,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                       : "bg-white border-[#DDD8CC] text-gray-600 hover:bg-gray-55"
                   }`}
                 >
-                  {sub}
+                  {formatSubject(sub)}
                 </button>
               ))}
             </div>
@@ -1084,7 +1094,7 @@ export default function SeriesResultAnalysisPage({ params }: { params: { seriesI
                       Q {activeQuestion.order}
                     </span>
                     <span className="text-[10px] bg-gray-100 text-[#8B9E6A] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded mt-0.5 inline-block">
-                      {activeQuestion.subject}
+                      {formatSubject(activeQuestion.subject)}
                     </span>
                   </h3>
                 </div>

@@ -19,7 +19,7 @@ export default function CreateTestSeriesPage() {
   const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
   const [customSubject, setCustomSubject] = useState("");
 
-  const defaultSubjects = ["Mathematics", "General Knowledge", "English", "Physics", "Chemistry", "Reasoning", "Current Affairs", "Biology", "Full Mock"];
+  const defaultSubjects = ["Maths", "GK", "English", "Physics", "Chemistry", "Reasoning", "Current Affairs", "Biology", "Full Mock"];
 
   // Pre-fill batch from the admin's currently-active batch on first load
   useEffect(() => {
@@ -69,9 +69,9 @@ export default function CreateTestSeriesPage() {
       
       const additional: string[] = [];
       if (hasNdaOrCds) {
-        additional.push("General Knowledge", "Mathematics", "English");
+        additional.push("GK", "Maths", "English");
       } else if (hasOta) {
-        additional.push("General Knowledge", "English");
+        additional.push("GK", "English");
       }
       
       for (const sub of additional) {

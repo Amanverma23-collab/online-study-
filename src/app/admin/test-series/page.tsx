@@ -163,11 +163,15 @@ export default function AdminTestSeriesPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1 max-w-xs">
-                          {s.subjects.map((sub) => (
-                            <span key={sub} className="bg-gray-100 text-gray-600 border border-gray-200 text-[10px] font-display font-bold uppercase px-2 py-0.5 rounded-sm">
-                              {sub}
-                            </span>
-                          ))}
+                          {s.subjects.map((sub) => {
+                            const norm = sub.trim().toLowerCase();
+                            const display = norm === "general knowledge" ? "GK" : norm === "mathematics" ? "Maths" : sub;
+                            return (
+                              <span key={sub} className="bg-gray-100 text-gray-600 border border-gray-200 text-[10px] font-display font-bold uppercase px-2 py-0.5 rounded-sm">
+                                {display}
+                              </span>
+                            );
+                          })}
                         </div>
                       </td>
                       <td className="px-6 py-4 font-mono text-[#C9A84C] font-bold">
