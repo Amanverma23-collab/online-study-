@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Plus, CheckCircle, FileText, Globe, Upload, AlertTriangle, ArrowRight, ShieldCheck, Clock } from "lucide-react";
+import { ArrowLeft, Plus, CheckCircle, FileText, Globe, Upload, AlertTriangle, ArrowRight, ShieldCheck, Clock, Check } from "lucide-react";
 
 interface Question {
   id: string;
@@ -572,10 +572,10 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
 
             {/* Wizard steps content */}
             <div
-              className={`rounded-[6px] border shadow-sm p-8 ${
+              className={`rounded-2xl border shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-10 transition-all duration-300 ${
                 wizardStep === 3 && extractedQuestions.length > 0
                   ? "bg-[#0D0F12] border-[#2E3B1E]"
-                  : "bg-white border-[#DDD8CC]"
+                  : "bg-white border-[#DDD8CC]/70"
               }`}
             >
               {/* WIZARD STEP 1 */}
@@ -772,60 +772,74 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
               {/* WIZARD STEP 3 */}
               {wizardStep === 3 && (
                 <div className="space-y-6">
-                  <div className="flex justify-between items-center border-b pb-4 mb-6">
-                    <h3 className="font-display font-bold text-navy text-sm uppercase tracking-wide">
-                      Step 3: Configure Section — {activeSubject}
-                    </h3>
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-[#DDD8CC]/70 pb-4 mb-6">
+                    <div>
+                      <h3 className="font-display font-bold text-[#0D0F12] uppercase tracking-wide whitespace-nowrap text-base sm:text-lg">
+                        Step 3: Configure Section — {activeSubject}
+                      </h3>
+                      <p className="text-xs text-[#8B9E6A] font-body mt-1">
+                        Set limits, upload file, and verify correct answers list
+                      </p>
+                    </div>
                     <button
                       onClick={() => setWizardStep(2)}
-                      className="text-xs font-bold uppercase text-gray-500 hover:text-[#0D0F12]"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold uppercase text-gray-500 hover:text-[#0D0F12] bg-[#F5F3EC]/50 hover:bg-[#F5F3EC] rounded-lg border border-[#DDD8CC]/40 transition duration-150 active:scale-95 self-start sm:self-auto"
                     >
-                      Cancel Section
+                      <ArrowLeft className="w-4 h-4" /> Cancel Section
                     </button>
                   </div>
 
                   {/* Top configuration inputs */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mb-8">
                     <div>
-                      <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">
+                      <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-2">
                         Section Duration (minutes)
                       </label>
-                      <input
-                        type="number"
-                        value={sectionDuration}
-                        onChange={(e) => setSectionDuration(e.target.value)}
-                        min="1"
-                        className="w-full px-3.5 py-2.5 border border-[#DDD8CC] rounded focus:outline-none focus:ring-1 focus:ring-[#C9A84C] text-sm font-semibold bg-white"
-                        required
-                      />
+                      <div className="relative">
+                        <Clock className="absolute left-3.5 top-[13px] w-4 h-4 text-[#8B9E6A]" />
+                        <input
+                          type="number"
+                          value={sectionDuration}
+                          onChange={(e) => setSectionDuration(e.target.value)}
+                          min="1"
+                          className="w-full pl-10 pr-4 py-2.5 border border-[#DDD8CC] rounded-lg focus:outline-none focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/10 text-sm font-semibold bg-white transition duration-150 text-[#0D0F12]"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">
+                      <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-2">
                         Section Marks Per Q
                       </label>
-                      <input
-                        type="number"
-                        step="any"
-                        value={sectionMarksPerQ}
-                        onChange={(e) => setSectionMarksPerQ(e.target.value)}
-                        className="w-full px-3.5 py-2.5 border border-[#DDD8CC] rounded focus:outline-none focus:ring-1 focus:ring-[#C9A84C] text-sm font-semibold bg-white"
-                        required
-                      />
+                      <div className="relative">
+                        <Check className="absolute left-3.5 top-[13px] w-4 h-4 text-[#8B9E6A]" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={sectionMarksPerQ}
+                          onChange={(e) => setSectionMarksPerQ(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2.5 border border-[#DDD8CC] rounded-lg focus:outline-none focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/10 text-sm font-semibold bg-white transition duration-150 text-[#0D0F12]"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-1.5">
+                      <label className="block text-xs font-display font-bold uppercase tracking-wider text-[#8B9E6A] mb-2">
                         Section Negative Marks
                       </label>
-                      <input
-                        type="number"
-                        step="any"
-                        value={sectionNegativeMarks}
-                        onChange={(e) => setSectionNegativeMarks(e.target.value)}
-                        className="w-full px-3.5 py-2.5 border border-[#DDD8CC] rounded focus:outline-none focus:ring-1 focus:ring-[#C9A84C] text-sm font-semibold bg-white"
-                        required
-                      />
+                      <div className="relative">
+                        <AlertTriangle className="absolute left-3.5 top-[13px] w-4 h-4 text-[#8B9E6A]" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={sectionNegativeMarks}
+                          onChange={(e) => setSectionNegativeMarks(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2.5 border border-[#DDD8CC] rounded-lg focus:outline-none focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/10 text-sm font-semibold bg-white transition duration-150 text-[#0D0F12]"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -856,18 +870,18 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                       </div>
 
                       {uploaderType === "pdf" ? (
-                        <div className="border border-dashed border-[#DDD8CC] rounded-[6px] p-12 text-center bg-[#F5F3EC]/50 flex flex-col items-center justify-center hover:bg-[#F5F3EC] cursor-pointer relative transition duration-150 group">
+                        <div className="border-2 border-dashed border-[#C9A84C]/30 hover:border-[#C9A84C] rounded-xl p-12 text-center bg-[#FAF9F5] flex flex-col items-center justify-center hover:bg-[#F5F3EC]/40 cursor-pointer relative transition-all duration-300 shadow-inner group">
                           <input
                             type="file"
                             accept=".pdf"
                             onChange={handlePdfUpload}
                             disabled={loading}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                           />
-                          <div className="p-4 bg-white border border-[#DDD8CC] rounded-full shadow-inner mb-4 group-hover:scale-105 transition duration-150">
+                          <div className="p-5 bg-white border border-[#DDD8CC]/60 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.03)] mb-4 text-[#C9A84C] group-hover:scale-110 group-hover:shadow-[0_8px_20px_rgba(201,168,76,0.15)] transition duration-300">
                             <Upload className="w-8 h-8 text-[#C9A84C]" />
                           </div>
-                          <h3 className="font-display font-bold text-lg text-navy mb-1 uppercase tracking-wider">
+                          <h3 className="font-display font-bold text-base text-navy mb-1 uppercase tracking-wider">
                             Drag & drop question paper PDF here
                           </h3>
                           <p className="text-xs text-[#8B9E6A] mb-2 font-body font-semibold">
@@ -875,18 +889,18 @@ export default function AddTestsHubPage({ params }: { params: { seriesId: string
                           </p>
                         </div>
                       ) : (
-                        <div className="border border-dashed border-[#DDD8CC] rounded-[6px] p-12 text-center bg-[#F5F3EC]/50 flex flex-col items-center justify-center hover:bg-[#F5F3EC] cursor-pointer relative transition duration-150 group">
+                        <div className="border-2 border-dashed border-[#C9A84C]/30 hover:border-[#C9A84C] rounded-xl p-12 text-center bg-[#FAF9F5] flex flex-col items-center justify-center hover:bg-[#F5F3EC]/40 cursor-pointer relative transition-all duration-300 shadow-inner group">
                           <input
                             type="file"
                             accept=".xlsx,.xls,.csv"
                             onChange={handleExcelUpload}
                             disabled={loading}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                           />
-                          <div className="p-4 bg-white border border-[#DDD8CC] rounded-full shadow-inner mb-4 group-hover:scale-105 transition duration-150">
+                          <div className="p-5 bg-white border border-[#DDD8CC]/60 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.03)] mb-4 text-[#C9A84C] group-hover:scale-110 group-hover:shadow-[0_8px_20px_rgba(201,168,76,0.15)] transition duration-300">
                             <Upload className="w-8 h-8 text-[#C9A84C]" />
                           </div>
-                          <h3 className="font-display font-bold text-lg text-navy mb-1 uppercase tracking-wider">
+                          <h3 className="font-display font-bold text-base text-navy mb-1 uppercase tracking-wider">
                             Drag & drop Excel spreadsheet here
                           </h3>
                           <p className="text-xs text-[#8B9E6A] mb-2 font-body font-semibold">
